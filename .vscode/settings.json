@@ -1,0 +1,16 @@
+{
+    "python.pythonPath": "${workspaceFolder}/.venv/bin/python",
+    "python.autoComplete.extraPaths": [
+        // "C:\\Users\\william.cowles\\Desktop\\repos\\mini\\rgbd",
+        "${workspaceFolder}"
+    ],
+    "python.analysis.extraPaths": [
+        // "C:\\Users\\william.cowles\\Desktop\\repos\\mini\\rgbd",
+        "${workspaceFolder}"
+    ],
+    "terminal.integrated.env.windows": {
+        // "PYTHONPATH": "C:\\Users\\william.cowles\\Desktop\\repos\\mini\\rgbd;${workspaceFolder};${env:PYTHONPATH}"
+        "PYTHONPATH": "${workspaceFolder};${env:PYTHONPATH}"
+    },
+    "python.envFile": "${workspaceFolder}/.env"
+}

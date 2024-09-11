@@ -1,0 +1,154 @@
+
+/*===================================================
+ * Global
+===================================================*/
+*{
+    font-family: Helvetica,monospace;
+    /* font-family: "Lucida Console", Courier, monospace; */
+    background-color:#000000;
+    margin:0;
+    padding:0;
+    border:0px transparent;
+    background-color: transparent;
+}
+
+/*===================================================
+ * Generic
+===================================================*/
+#BG{
+    background-color:#1a1a1a;
+}
+#btn {
+    min-width: 175px;
+    max-width: 175px;
+    padding-top: 5;
+    padding-bottom: 5;
+    background-color: rgb(10, 182, 194);
+    border: 1px solid rgb(1, 102, 102);
+    color:rgb(0, 0, 0);
+    font-size: 30px;
+}
+#btn:pressed {
+    background-color: rgb(25, 236, 243);
+    border: 2px solid rgb(1, 95, 102);
+    font-size: 28px;
+}
+#btn:disabled {
+    background-color: rgb(135, 135, 135);
+}
+#btn:hover {
+    border: 2px solid rgb(1, 95, 102);
+}
+#container1{
+    background-color:#000000;
+    color: transparent;
+    border: 2px solid rgb(255, 255, 255);
+    /* qproperty-alignment: AlignCenter; */
+}
+
+/*===================================================
+ * panel
+===================================================*/
+#panel #title{
+    background-color: transparent;
+    color:rgb(255, 255, 255);
+    font-size:30px;
+    font-weight: bold;
+    /* text-decoration: underline; */
+    qproperty-alignment: AlignCenter;
+}
+#panel #param_name{
+    background-color: transparent;
+    color:rgb(255, 255, 255);
+    font-size:24px;
+    text-decoration: underline;
+    qproperty-alignment: AlignCenter;
+}
+#panel #param_value{
+    background-color: transparent;
+    color:rgb(255, 255, 255);
+    font-size:24px;
+    /* font-weight: bold; */
+    qproperty-alignment: AlignCenter;
+}
+
+#panel #btn_grid {
+    background-color: rgb(10, 182, 194);
+    border: 1px solid rgb(1, 102, 102);
+    color:rgb(0, 0, 0);
+    font-size:30px;
+}
+#panel #btn_grid:pressed {
+    background-color: rgb(25, 236, 243);
+    border: 2px solid rgb(1, 95, 102);
+    font-size:28px;
+}
+#panel #btn_grid:disabled {
+    background-color: rgb(135, 135, 135);
+}
+
+#panel #btn_stop {
+    min-width:175px;
+    max-width:175px;
+    background-color: rgb(194, 10, 10);
+    border: 1px solid rgb(102, 1, 1);
+    color:rgb(0, 0, 0);
+    font-size:30px;
+}
+#panel #btn_stop:pressed {
+    background-color: rgb(243, 25, 25);
+    border: 2px solid rgb(102, 1, 1);
+    font-size:28px;
+}
+#panel #btn_stop:checked {
+    background-color: rgb(243, 25, 25);
+    border: 4px solid rgb(252, 247, 0);
+    font-size:28px;
+}
+
+/*===================================================
+ * page home
+===================================================*/
+#page_home #header{
+    background-color: transparent;
+    color:rgb(255, 255, 255);
+    font-size:24px;
+    text-decoration: underline;
+    qproperty-alignment: AlignCenter;
+}
+#page_home #btn {
+    font-size: 24px;
+}
+#page_home #btn:pressed {
+    font-size: 22px;
+}
+
+/*===================================================
+ * page generator1
+===================================================*/
+#page_generator1 #btn_img{
+    background-color: transparent;
+    border: 1px solid rgb(255, 255, 255);
+}
+
+#page_generator1 #btn_start {
+    min-width:175px;
+    max-width:175px;
+    background-color: rgb(32, 194, 10);
+    border: 1px solid rgb(1, 102, 1);
+    color:rgb(0, 0, 0);
+    font-size:30px;
+}
+#page_generator1 #btn_start:pressed {
+    background-color: rgb(51, 243, 25);
+    border: 2px solid rgb(1, 102, 1);
+    font-size:28px;
+}
+#page_generator1 #btn_start:disabled {
+    background-color: rgb(135, 135, 135);
+}
+
+
+
+/* for testing */
+/* *{background-color:transparent;border:1px solid red;} */

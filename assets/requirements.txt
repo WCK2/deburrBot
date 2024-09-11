@@ -1,0 +1,91 @@
+# Windows
+# Python 3.9.2
+
+pip install pyrealsense2==2.54.2.5684 opencv-python matplotlib
+pip install open3d pymodbus==2.5.3 keyboard
+pip install cython torch==2.0.1 torchvision==0.15.2 timm
+pip install git+https://github.com/ChaoningZhang/MobileSAM.git
+pip install scikit-learn scikit-spatial
+pip install pyqt5
+# Comment out lines 90-94 in .venv\Lib\site-packages\timm\models\_registry.py (f'Overwriting {model_name} in registry with {fn.__module__}.{model_name}. ...)
+pip install opencv-contrib-python # charuco needs opencv-contrib-python
+
+
+
+
+# Linux - (RPi 4B - 4GB) OS-other, Raspberry Pi OS (Legacy, 64-bit) Full - A port of Debian Bullseye with security updates, desktop environment and recommended applications. (Released: 2024-07-04)
+# Patriot 64 GB
+# Python 3.9.2
+
+sudo apt-get update
+sudo apt-get upgrade
+sudo apt-get install build-essential -y
+sudo apt-get install python3-pyqt5 -y
+sudo apt-get install swig libssl-dev libffi-dev -y
+sudo apt install python3-opencv -y
+sudo apt-get install screen -y
+
+sudo raspi-config # enable VNC
+sudo reboot -h now
+
+pip install git+https://github.com/ChaoningZhang/MobileSAM.git
+pip install cython opencv-python pycocotools matplotlib
+pip install torch==2.0.1 ## works on rpi w python 3.9.2
+pip install torchvision==0.15.2
+pip install timm
+  # Comment out lines 90-94 in .venv\Lib\site-packages\timm\models\_registry.py (f'Overwriting {model_name} in registry with {fn.__module__}.{model_name}. ...)
+pip install pyrealsense2==2.54.2.5684
+pip install scikit-learn scikit-spatial open3d # open3d reinstalls a lot of the above libs so probably run it first next time
+  # import open3d --> ImportError: cannot import name 'soft_unicode' from 'markupsafe' (/home/will/repos/deburrBot/.venv/lib/python3.9/site-packages/markupsafe/__init__.py)
+pip install werkzeug==2.0.3 MarkupSafe==2.0.1 # works w open3d==0.18 even though it will warn against it
+sudo apt-get install libx11-xcb1 libx11-xcb-dev libxcb1 libxcb-xfixes0-dev libxcb-shm0-dev
+pip uninstall opencv-python
+
+
+
+
+
+
+
+
+# Linux - (RPi 4B - 8GB) OS-other, Raspberry Pi OS (Legacy, 64-bit) Full - A port of Debian Bullseye with security updates, desktop environment and recommended applications. (Released: 2024-07-04)
+# Samsung Select 128 GB
+# Python 3.9.2
+
+sudo apt-get update
+sudo apt-get upgrade
+sudo apt-get install build-essential -y
+sudo apt-get install python3-pyqt5 -y
+sudo apt-get install swig libssl-dev libffi-dev -y
+sudo apt install python3-opencv -y
+sudo apt-get install screen -y
+
+sudo raspi-config # enable VNC
+sudo reboot -h now
+
+pip install git+https://github.com/ChaoningZhang/MobileSAM.git
+  # Successfully installed mobile-sam-1.0
+pip install cython opencv-python-headless pycocotools matplotlib # install headless bc opencv-python includes GUI components like imshow which rely on Qt libs. These libs can conflict with you PyQt5 application's dependencies, especially when trying to load Qt platform plugins like 'xcb'
+  # Successfully installed cython-3.0.11 opencv-python-headless-4.10.0.84 pycocotools-2.0.8
+pip install torch==2.0.1 ## works on rpi w python 3.9.2
+  # Successfully installed filelock-3.15.4 mpmath-1.3.0 networkx-3.2.1 sympy-1.13.2 torch-2.0.1
+pip install torchvision==0.15.2
+pip install timm
+  # Comment out lines 90-94 in .venv\Lib\site-packages\timm\models\_registry.py (f'Overwriting {model_name} in registry with {fn.__module__}.{model_name}. ...)
+  # Successfully installed fsspec-2024.6.1 huggingface-hub-0.24.6 packaging-24.1 pyyaml-6.0.2 safetensors-0.4.4 timm-1.0.9 tqdm-4.66.5
+# pip install pyrealsense2==2.54.2.5684
+pip install scikit-learn scikit-spatial open3d==0.18
+  # Successfully installed MarkupSafe-2.1.5 attrs-24.2.0 configargparse-1.7 contourpy-1.3.0 dash-2.17.1 dash-core-components-2.0.0 dash-html-components-2.0.0 dash-table-5.0.0 fastjsonschema-2.20.0 fonttools-4.53.1 importlib-metadata-8.4.0 importlib-resources-6.4.4 joblib-1.4.2 jsonschema-4.23.0 jsonschema-specifications-2023.12.1 jupyter-core-5.7.2 matplotlib-3.9.2 nbformat-5.10.4 nest-asyncio-1.6.0 numpy-1.26.4 open3d-0.18.0 platformdirs-4.2.2 plotly-5.24.0 referencing-0.35.1 retrying-1.3.4 rpds-py-0.20.0 scikit-learn-1.5.1 scikit-spatial-7.2.0 scipy-1.13.1 tenacity-9.0.0 threadpoolctl-3.5.0 traitlets-5.14.3 typing-extensions-4.12.2 werkzeug-3.0.4 zipp-3.20.1
+  # import open3d --> ImportError: cannot import name 'soft_unicode' from 'markupsafe' (/home/will/repos/deburrBot/.venv/lib/python3.9/site-packages/markupsafe/__init__.py)
+pip install werkzeug==2.0.3 MarkupSafe==2.0.1
+  # these work with open3d==0.18 even though pip will warn/error for installing them
+sudo apt-get install libx11-xcb1 libx11-xcb-dev libxcb1 libxcb-xfixes0-dev libxcb-shm0-dev
+sudo apt install libxcb-xinerama0 libxcb-xinerama0-dev libxkbcommon-x11-0
+
+
+
+
+
+
+
+

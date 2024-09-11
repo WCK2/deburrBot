@@ -1,0 +1,17 @@
+*__pycache__/
+*/backup/*
+*bu.*
+test/*
+temp/*
+
+assets/temp/*
+assets/solidworks/*
+
+assets/models/**/*.pt
+
+assets/data/*
+!**/d435_2024-08-22_14-22-56
+
+
+
+

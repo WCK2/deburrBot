@@ -1,5 +1,6 @@
 import copy
 import gzip
+import numpy as np
 import pickle
 import threading
 import time
@@ -104,17 +105,17 @@ class TMobileSAM(QThread):
         fx = _fx * (roi_mask.shape[1] / idata.color_intrinsics['width'])
         fy = _fy * (roi_mask.shape[0] / idata.color_intrinsics['height'])
 
-        pixel_width = origin[2] / fx
-        pixel_height = origin[2] / fy
-        # print(f'pixel_width (x): {pixel_width} mm')
-        # print(f'pixel_height (y): {pixel_height} mm')
+        width_mm_per_pixel = origin[2] / fx
+        height_mm_per_pixel = origin[2] / fy
+        # print(f'width mm per pixel (x): {width_mm_per_pixel} mm')
+        # print(f'height mm per pixel (y): {height_mm_per_pixel} mm')
 
         tool_x_diameter_mm = 20
-        tool_x_diameter_pixels = int(tool_x_diameter_mm / pixel_width)
-        print(f'tool_x_diameter_pixels: {tool_x_diameter_pixels}')
+        tool_x_diameter_pixels = int(tool_x_diameter_mm / width_mm_per_pixel)
+        # print(f'tool_x_diameter_pixels: {tool_x_diameter_pixels}')
 
-        coordinate_pairs, self.draw_img = top_down_stripes(roi_mask, self.draw_img, tool_pixel_diameter=tool_x_diameter_pixels)
-        print('coordinate_pairs:\n' + '\n'.join(str(p) for p in coordinate_pairs) + '\n') ## log
+        coordinate_pairs, self.draw_img = top_down_stripes(roi_mask, self.draw_img, tool_x_diameter_pixels, width_mm_per_pixel, height_mm_per_pixel, min_keep_distance=10)
+        # print('coordinate_pairs:\n' + '\n'.join(str(p) for p in coordinate_pairs) + '\n') ## log
         cv2.imwrite(idata.path_with_timestamp + 'draw_img_step3.jpg', cv2.cvtColor(self.draw_img, cv2.COLOR_RGB2BGR))
 
         #* Step 4: convert target pairs (pixel coords wrt image) --> vertices (wrt camera) --> robot targets (pose wrt robot frame and tool)
@@ -125,7 +126,7 @@ class TMobileSAM(QThread):
 
             for coords in pair:
                 _vertex = get_vertex(idata.vertices, coords)
-                if _vertex == (0, 0, 0):
+                if np.array_equal(_vertex, [0, 0, 0]):
                     invalid_vertex_flag = True
                 # _pose = np.concatenate([_vertex, [0, 0, 0]])
                 _pose = np.concatenate([_vertex, [180, 0, 0]])
@@ -135,7 +136,7 @@ class TMobileSAM(QThread):
                 camera_target_pairs.append(processed_pair)
 
         camera_target_pairs = np.round(camera_target_pairs, 3)
-        print('camera_target_pairs:\n' + '\n'.join(str(p) for p in camera_target_pairs) + '\n') ## log
+        # print('camera_target_pairs:\n' + '\n'.join(str(p) for p in camera_target_pairs) + '\n') ## log
 
         transformer = TargetTransformer(
             robot_frame=idata.robot_frame,
@@ -184,7 +185,11 @@ class TMobileSAM(QThread):
             'mask': mask,
             'coordinate_pairs': coordinate_pairs,
             'camera_target_pairs': camera_target_pairs,
-            'robot_target_pairs': self.robot_target_pairs
+            'robot_target_pairs': self.robot_target_pairs,
+            'robot_frame': idata.robot_frame,
+            'robot_tool': idata.robot_tool,
+            'robot_pose': idata.robot_pose,
+            'robot_camera_tool': idata.robot_camera_tool
         }
 
         filename_log = idata.path_with_timestamp + f'tmobileSAM_data_log_{time.strftime("%H-%M-%S")}.pkl.gz'

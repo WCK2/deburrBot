@@ -26,7 +26,7 @@ class TCamera(QThread):
             idata.set_rgbd(rgbd_data)
             d435.close()
         elif settings.TESTING:
-            rgbd_data = rgbd_read_data('d435_2024-08-22_14-22-56')
+            rgbd_data = rgbd_read_data('d435_2024-09-17_10-40-24')
             idata.set_rgbd(rgbd_data)
         else:
             print(f'!!WARNING!! No Camera Detected')
@@ -39,10 +39,10 @@ class TCamera(QThread):
                 print(f'!!WARNING!! Unable to get transformation_data from the robot server')
                 return
             data = {
-                'frame': [-809.075, -11.325, -100.975, -0.18, 0.01, 95.34],
-                'tool': [-133.368, 77.0, 200.0, -170.0, 0.0, -120.0],
-                'pose': [186.501, -154.541, 177.739, 10, -11.25, -90],
-                'camera_tool': [81.943, 76.054, 48.418, 15.16, -0.332, 149.98]
+                'frame': [-809.075, -11.325, -100.975, -0.180246, -0.0034, 91.08],
+                'tool': [-139.39, 64.585, 199.93, -169.95, 0.288, -115.89],
+                'pose': [-69.134, -299.98, 441.363, 11.497, -15.384, -94.289],
+                'camera_tool': [78.21, 73.4, 50.54, 15.29, -0.46, 150.04]
             }
         
         print(f'transformation_data:\n{data}')

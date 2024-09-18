@@ -48,8 +48,7 @@ class SETTINGS:
         self.jaka_ip = '192.168.69.60'
         self.jaka_server_port = 42000
 
-        self.rpi_ip = '192.168.69.61'
-        # self.rpi_ip = '192.168.69.120'
+        self.rpi_ip = '192.168.69.120' if os.name == 'nt' else '192.168.69.62'
         self.rpi_port = 42001
         self.rpi_url = f'http://{self.rpi_ip}:{self.rpi_port}/'
 
@@ -61,12 +60,14 @@ class SETTINGS:
         self.emergency_input_pin = 0
         self.pause_button_pin = 1
 
-        self.workstation_frame = [-809.075, -11.325, -100.975, -0.18, 0.01, 95.34]
-        self.grinder_tool = [-133.368, 77.0, 200.0, -170.0, 0.0, -120.0]
-        self.camera_tool = [81.943, 76.054, 48.418, 15.16, -0.332, 149.98]
+        self.workstation_frame = (-809.075, -11.325, -100.975, -0.18, -0.0034, 91.08)
+        self.grinder_tool = (-139.39, 64.585, 199.93, -169.95, 0.288, -115.89)
+        self.camera_tool = [78.21, 73.4, 50.54, 15.29, -0.46, 150.04]
 
-        self.home_joints = [-196.654266, 108.065179, -114.478112, 86.956264, 86.213861, 98.318100]
-        self.picture_joints = [-192.061079, 73.766489, -38.006393, 39.664572, 85.153761, 193.192964]
+        self.home_joints = [-195.853979, 108.126304, -114.461449, 86.588613, 87.045869, 103.318228]
+        # self.picture_joints = [-196.357030, 72.510310, -31.123720, 34.044570, 85.132250, 193.161290]
+        # self.picture_joints = [-213.749297, 93.236318, -101.522468, 85.785017, 81.031320, 176.130734] #! temp1
+        self.picture_joints = [-170.708690, 94.649360, -102.296460, 82.410690, 91.833180, 217.942000] #! temp2
 
 settings = SETTINGS()
 
@@ -253,18 +254,18 @@ class JakaHttpHandler(SimpleHTTPRequestHandler):
                 return self.json_response(400, {"error": "Missing 'name' in query parameters"})
 
             if name == "frame":
-                frame = [round(value, 3) for value in robot.get_frame()[1]]
+                frame = [round(value, 3) for value in robot.get_frame(isdegs=True)[1]]
                 return self.json_response(200, {"frame": frame})
             elif name == "tool":
-                tool = [round(value, 3) for value in robot.get_tool()[1]]
+                tool = [round(value, 3) for value in robot.get_tool(isdegs=True)[1]]
                 return self.json_response(200, {"tool": tool})
             elif name == "tcp_pose":
                 pose = [round(value, 3) for value in robot.get_tcp_pose()]
                 return self.json_response(200, {"pose": pose})
             elif name == "transformation_data":
-                frame = [round(value, 3) for value in robot.get_frame()[1]]
-                tool = [round(value, 3) for value in robot.get_tool()[1]]
-                pose = [round(value, 3) for value in robot.get_tcp_pose()]        
+                frame = [round(value, 3) for value in robot.get_frame(isdegs=True)[1]]
+                tool = [round(value, 3) for value in robot.get_tool(isdegs=True)[1]]
+                pose = [round(value, 3) for value in robot.get_tcp_pose()]
 
                 data_package = {
                     "frame": frame,

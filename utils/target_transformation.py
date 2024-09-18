@@ -92,7 +92,7 @@ def get_vertex(vertices, coord, radius:int=5):
     
     if len(valid_vertices) == 0:
         print(f'!!WARNING!! Could not find any valid vertices at coord: {coord}, with radius = {radius}')
-        return (0, 0, 0)
+        return np.array([0.0, 0.0, 0.0])
     
     # Calculate the average of the valid vertices
     average_vertex = valid_vertices.mean(axis=0)
@@ -116,7 +116,7 @@ class TargetTransformer():
         T_object_2_frame_wrt_tool = np.dot(self.T_tool_2_frame, T_object_2_tool)
 
         p_object_2_frame_wrt_tool = tform_2_pose(T_object_2_frame_wrt_tool).tolist()
-        ## p_object_2_frame_wrt_tool[3:] = np.array([0, 0, 0])
+        p_object_2_frame_wrt_tool[3:] = np.array([0, 0, 0])
         # print(f'p_object_2_frame_wrt_tool: {p_object_2_frame_wrt_tool}')
 
         return p_object_2_frame_wrt_tool

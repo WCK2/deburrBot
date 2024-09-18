@@ -67,9 +67,6 @@ class TMobileSAM(QThread):
         cv2.imwrite(idata.path_with_timestamp + 'masked_img.jpg', cv2.cvtColor(self.masked_img, cv2.COLOR_RGB2BGR))
         cv2.imwrite(idata.path_with_timestamp + 'obj_bw_img.jpg', self.obj_bw_img)
 
-        masked_depth = np.zeros_like(idata.depth, dtype=idata.depth.dtype)
-        masked_depth[mask] = idata.depth[mask]
-
         masked_vertices = copy.deepcopy(idata.vertices)
         masked_vertices[~mask] = [0, 0, 0]
         flattened_vertices = masked_vertices.reshape(-1, 3)
@@ -169,19 +166,11 @@ class TMobileSAM(QThread):
             print('Received non-JSON response or error.')
 
         #? save
-        # self.save_results()
-        # np.save(idata.path_with_timestamp + 'idata_vertices.npy', idata.vertices)
-
-        # depth_min = np.min(idata.depth)
-        # depth_max = np.max(idata.depth)
-        # normalized_depth = (idata.depth - depth_min) / (depth_max - depth_min) * 255
-        # normalized_depth_image = normalized_depth.astype(np.uint8)
-        # cv2.imwrite(idata.path_with_timestamp + 'normalized_depth_image.jpg', normalized_depth_image)
-
         data_log = {
             'input_points': self.input_points,
             'input_label': self.input_labels,
             'image': idata.colors,
+            'vertices': idata.vertices,
             'mask': mask,
             'coordinate_pairs': coordinate_pairs,
             'camera_target_pairs': camera_target_pairs,

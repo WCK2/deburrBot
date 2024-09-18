@@ -6,6 +6,7 @@ from utils.D435_rpi import D435, rgbd_read_data
 from utils.config import settings, idata
 from utils.memory import mem
 from gui.workers.tpost import get_req
+from utils.img_processing import rgbd_depth_filter
 
 
 class TCamera(QThread):
@@ -23,10 +24,12 @@ class TCamera(QThread):
 
         if d435.camera_detected:
             rgbd_data = d435.get_data(save=True)
+            rgbd_data, _ = rgbd_depth_filter(rgbd_data, 100, 1500)
             idata.set_rgbd(rgbd_data)
             d435.close()
         elif settings.TESTING:
             rgbd_data = rgbd_read_data('d435_2024-09-17_10-40-24')
+            rgbd_data, _ = rgbd_depth_filter(rgbd_data, 100, 1500)
             idata.set_rgbd(rgbd_data)
         else:
             print(f'!!WARNING!! No Camera Detected')

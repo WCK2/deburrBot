@@ -178,7 +178,10 @@ class D435:
             print(f'color_intrinsics: {self.color_intrinsics}')
 
     def close(self):
-        self.p.stop()
+        try:
+            self.p.stop()
+        except Exception as e:
+            print(f'!!Warning!! Could not stop D435 pipeline...\n{e}')
 
     def test_get_data(self):
         frames = self.p.wait_for_frames()
@@ -195,21 +198,19 @@ class D435:
         cv2.imwrite(self.vp_data + 'colors_original.jpg', cv2.cvtColor(colors_original, cv2.COLOR_RGB2BGR))
 
     def get_data(self, n=10, save=False):
-        depth_frames = []
-
-        for i in range(n):
+        for frame_idx in range(n):
             frames = self.p.wait_for_frames()
             aligned_frames = align.process(frames)
-            depth_frames.append(aligned_frames.get_depth_frame())
+            depth_frame = aligned_frames.get_depth_frame()
+            color_frame = aligned_frames.get_color_frame()
 
-        for depth_frame in depth_frames:
             depth_frame = self.decimation.process(depth_frame)
             # depth_frame = self.depth_to_disparity.process(depth_frame)
             depth_frame = self.spatial.process(depth_frame)
             depth_frame = self.temporal.process(depth_frame)
             # depth_frame = self.disparity_to_depth.process(depth_frame)
-            # depth_frame = self.hole_filling.process(depth_frame) # can help fill some edges but sometimes it does way too much
-
+            # # depth_frame = self.hole_filling.process(depth_frame) # can help fill some edges but sometimes it does way too much
+        
         depth = np.asanyarray(depth_frame.get_data())
         depth_image = np.asanyarray((colorizer.colorize(depth_frame)).get_data())
 
@@ -257,14 +258,14 @@ from utils.img_processing import plt_imshow
 
 if __name__ == '__main__':
     # d435 = D435(load_json='')
-    # d435 = D435()
-    # rgbd_data = d435.get_data(save=True)
+    d435 = D435()
+    rgbd_data = d435.get_data(save=True)
 
     # plt_imshow(rgbd_data.depth, rgbd_data.vertices[:,:,2])
     # plt_imshow(rgbd_data.vertices[:,:,0], rgbd_data.vertices[:,:,1])
 
-    rgbd_data = rgbd_read_data(folder_path='d435_2024-08-16_05-43-13')
-    plt_imshow(rgbd_data.colors, rgbd_data.vertices[:,:,0])
+    # rgbd_data = rgbd_read_data(folder_path='d435_2024-08-16_05-43-13')
+    # plt_imshow(rgbd_data.colors, rgbd_data.vertices[:,:,0])
 
 
 

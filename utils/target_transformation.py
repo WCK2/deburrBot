@@ -115,9 +115,8 @@ class TargetTransformer():
         T_object_2_tool = np.dot(inverse_tform(self.T_tool_2_flange), T_object_2_flange)
         T_object_2_frame_wrt_tool = np.dot(self.T_tool_2_frame, T_object_2_tool)
 
-        p_object_2_frame_wrt_tool = tform_2_pose(T_object_2_frame_wrt_tool).tolist()
-        p_object_2_frame_wrt_tool[3:] = np.array([0, 0, 0])
-        # print(f'p_object_2_frame_wrt_tool: {p_object_2_frame_wrt_tool}')
+        p_object_2_frame_wrt_tool = tform_2_pose(T_object_2_frame_wrt_tool)
+        p_object_2_frame_wrt_tool[-3:] = 0
 
         return p_object_2_frame_wrt_tool
 

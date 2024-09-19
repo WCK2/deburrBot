@@ -17,23 +17,23 @@ class TCamera(QThread):
 
     def __run(self):
         #? take pic
-        if settings.TESTING:
-            d435 = D435(load_json='')
-        else:
+        try:
             d435 = D435()
+            # d435 = D435(load_json='')
 
-        if d435.camera_detected:
-            rgbd_data = d435.get_data(save=True)
-            rgbd_data, _ = rgbd_depth_filter(rgbd_data, 100, 1500)
-            idata.set_rgbd(rgbd_data)
+            if d435.camera_detected:
+                rgbd_data = d435.get_data(save=True)
+                rgbd_data, _ = rgbd_depth_filter(rgbd_data, 100, 1500)
+                idata.set_rgbd(rgbd_data)
+            elif settings.TESTING:
+                rgbd_data = rgbd_read_data('d435_2024-09-19_09-25-47')
+                rgbd_data, _ = rgbd_depth_filter(rgbd_data, 100, 1500)
+                idata.set_rgbd(rgbd_data)
+            else:
+                print(f'!!WARNING!! No Camera Detected')
+                return
+        finally:
             d435.close()
-        elif settings.TESTING:
-            rgbd_data = rgbd_read_data('d435_2024-09-17_10-40-24')
-            rgbd_data, _ = rgbd_depth_filter(rgbd_data, 100, 1500)
-            idata.set_rgbd(rgbd_data)
-        else:
-            print(f'!!WARNING!! No Camera Detected')
-            return
         
         #? get robot data
         data = get_req(path='robot', data={'name': 'transformation_data'})
@@ -44,15 +44,21 @@ class TCamera(QThread):
             data = {
                 'frame': [-809.075, -11.325, -100.975, -0.180246, -0.0034, 91.08],
                 'tool': [-139.39, 64.585, 199.93, -169.95, 0.288, -115.89],
-                'pose': [-69.134, -299.98, 441.363, 11.497, -15.384, -94.289],
-                'camera_tool': [78.21, 73.4, 50.54, 15.29, -0.46, 150.04]
+                'pose': [190.32, -151.19, 832.05, 11.618, -15.506, -94.229],
+                'camera_tool': [78.21, 73.4, 50.54, 15.29, -0.46, 150.04],
+                'x_boundary_range': [-565, 565],
+                'y_boundary_range': [-340, 345],
+                'z_boundary_range': [-40, 60]
             }
         
-        print(f'transformation_data:\n{data}')
+        # print(f'transformation_data:\n{data}')
         idata.robot_frame = data['frame']
         idata.robot_tool = data['tool']
         idata.robot_pose = data['pose']
         idata.robot_camera_tool = data['camera_tool']
+        idata.x_boundary_range = data['x_boundary_range']
+        idata.y_boundary_range = data['y_boundary_range']
+        idata.z_boundary_range = data['z_boundary_range']
 
         self.finished.emit()
 

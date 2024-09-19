@@ -71,6 +71,9 @@ class IMAGE_DATA:
         self.robot_pose = [0,0,0,0,0,0]
         self.robot_camera_tool = [0,0,0,0,0,0]
 
+        self.x_boundary_range = [0,0]
+        self.y_boundary_range = [0,0]
+        self.z_boundary_range = [0,0]
 
     def set_rgbd(self, rgbd_data):
         self.colors = copy.deepcopy(rgbd_data.colors) # 360, 640

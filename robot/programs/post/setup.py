@@ -67,7 +67,12 @@ class SETTINGS:
         self.home_joints = [-195.853979, 108.126304, -114.461449, 86.588613, 87.045869, 103.318228]
         # self.picture_joints = [-196.357030, 72.510310, -31.123720, 34.044570, 85.132250, 193.161290]
         # self.picture_joints = [-213.749297, 93.236318, -101.522468, 85.785017, 81.031320, 176.130734] #! temp1
-        self.picture_joints = [-170.708690, 94.649360, -102.296460, 82.410690, 91.833180, 217.942000] #! temp2
+        # self.picture_joints = [-170.708690, 94.649360, -102.296460, 82.410690, 91.833180, 217.942000] #! temp2
+        self.picture_joints = [-191.885584, 73.340272, -37.301865, 38.968284, 86.117135, 197.443493]
+
+        self.x_boundary_range = [-565, 565]
+        self.y_boundary_range = [-340, 345]
+        self.z_boundary_range = [-40, 60] # need to be careful around the Control Panel / GUI
 
 settings = SETTINGS()
 
@@ -271,7 +276,10 @@ class JakaHttpHandler(SimpleHTTPRequestHandler):
                     "frame": frame,
                     "tool": tool,
                     "pose": pose,
-                    "camera_tool": settings.camera_tool
+                    "camera_tool": settings.camera_tool,
+                    "x_boundary_range": settings.x_boundary_range,
+                    "y_boundary_range": settings.y_boundary_range,
+                    "z_boundary_range": settings.z_boundary_range
                 }
                 return self.json_response(200, data_package)
             elif name == "is_in_pos":

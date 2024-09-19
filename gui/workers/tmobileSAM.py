@@ -133,7 +133,7 @@ class TMobileSAM(QThread):
                 camera_target_pairs.append(processed_pair)
 
         camera_target_pairs = np.round(camera_target_pairs, 3)
-        # print('camera_target_pairs:\n' + '\n'.join(str(p) for p in camera_target_pairs) + '\n') ## log
+        print('camera_target_pairs:\n' + '\n'.join(str(p) for p in camera_target_pairs) + '\n') ## log
 
         transformer = TargetTransformer(
             robot_frame=idata.robot_frame,
@@ -142,21 +142,37 @@ class TMobileSAM(QThread):
             robot_camera_tool=idata.robot_camera_tool
         )
 
-        self.robot_target_pairs = []
+        robot_target_pairs = []
         for pair in camera_target_pairs:
             processed_pair = []
 
             for pose in pair:
                 new_pose = transformer.transform(pose)
                 processed_pair.append(new_pose)
-            
-            self.robot_target_pairs.append(processed_pair)
+
+            robot_target_pairs.append(processed_pair)
         
-        self.robot_target_pairs = np.round(self.robot_target_pairs, 3).tolist()
-        print('robot_target_pairs:\n' + '\n'.join(str(p) for p in self.robot_target_pairs) + '\n') ## log
+        robot_target_pairs = np.round(robot_target_pairs, 3)
+        print('robot_target_pairs:\n' + '\n'.join(str(p) for p in robot_target_pairs) + '\n') ## log
+
+        #? filter targets outside of workspace boundary
+        all_target_poses = np.array([pose for pair in robot_target_pairs for pose in pair])
+        valid_x = (all_target_poses[:, 0] >= idata.x_boundary_range[0]) & (all_target_poses[:, 0] <= idata.x_boundary_range[1])
+        valid_y = (all_target_poses[:, 1] >= idata.y_boundary_range[0]) & (all_target_poses[:, 1] <= idata.y_boundary_range[1])
+        valid_z = (all_target_poses[:, 2] >= idata.z_boundary_range[0]) & (all_target_poses[:, 2] <= idata.z_boundary_range[1])
+        valid_indices = valid_x & valid_y & valid_z
+
+        valid_indices_pairs = valid_indices.reshape(-1, 2)
+        valid_pairs = valid_indices_pairs.all(axis=1)
+
+        valid_target_pairs = [robot_target_pairs[i] for i in range(len(robot_target_pairs)) if valid_pairs[i]]
+        print('valid_target_pairs:\n' + '\n'.join(str(p) for p in valid_target_pairs) + '\n') ## log
 
         #* Step 5: post target_pairs
-        res = post_req_sync(path='mem', data={'name': 'generator1_target_pairs', 'value': self.robot_target_pairs})
+        tx_target_pairs = [[pose.tolist() for pose in pair] for pair in valid_target_pairs]
+        print(f'tx_target_pairs: {tx_target_pairs}\n')
+        
+        res = post_req_sync(path='mem', data={'name': 'generator1_target_pairs', 'value': tx_target_pairs})
         if isinstance(res, dict):
             if res.get('status') == 'success':
                 self.target_pairs_post_status = True
@@ -174,7 +190,8 @@ class TMobileSAM(QThread):
             'mask': mask,
             'coordinate_pairs': coordinate_pairs,
             'camera_target_pairs': camera_target_pairs,
-            'robot_target_pairs': self.robot_target_pairs,
+            'robot_target_pairs': robot_target_pairs,
+            'valid_target_pairs': valid_target_pairs,
             'robot_frame': idata.robot_frame,
             'robot_tool': idata.robot_tool,
             'robot_pose': idata.robot_pose,

@@ -385,7 +385,8 @@ def force_target_pair_run(t_start: list, t_end: list, zcontact: bool=True, easeo
 
     #? ease on
     t_easeon = t_start.copy()
-    t_easeon[2] += easeon
+    # t_easeon[2] += easeon #! May want to just set this to (0 + easeon) as long as the given part isnt super tall (3d)
+    t_easeon[2] = easeon #! ... like so lol
     robot.movel(t_easeon, speed=40)
     robot.waitmove()
 
@@ -398,10 +399,11 @@ def force_target_pair_run(t_start: list, t_end: list, zcontact: bool=True, easeo
         counter = 0
         zstep = 0
         break_counter = 0
+        no_contact_tolerance = 5
         pstart = robot.get_tcp_pose()
         while True:
             d = abs(robot.get_tcp_pose()[2] - pstart[2])
-            if d > easeon:
+            if d > (easeon + no_contact_tolerance):
                 print(f'break zcontact loop, without contact. (d={d})')
                 break
 
@@ -552,7 +554,7 @@ def generator1_deburring_program():
     robot.waitmove()
 
     ZeroForceSensor()
-    robot.set_DO(settings.angle_grinder_pin, True)
+    # robot.set_DO(settings.angle_grinder_pin, True)
     
     target_pairs = mem.generator1_target_pairs
     for pair in target_pairs:

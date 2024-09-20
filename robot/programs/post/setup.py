@@ -65,14 +65,11 @@ class SETTINGS:
         self.camera_tool = [78.21, 73.4, 50.54, 15.29, -0.46, 150.04]
 
         self.home_joints = [-195.853979, 108.126304, -114.461449, 86.588613, 87.045869, 103.318228]
-        # self.picture_joints = [-196.357030, 72.510310, -31.123720, 34.044570, 85.132250, 193.161290]
-        # self.picture_joints = [-213.749297, 93.236318, -101.522468, 85.785017, 81.031320, 176.130734] #! temp1
-        # self.picture_joints = [-170.708690, 94.649360, -102.296460, 82.410690, 91.833180, 217.942000] #! temp2
         self.picture_joints = [-191.885584, 73.340272, -37.301865, 38.968284, 86.117135, 197.443493]
 
         self.x_boundary_range = [-565, 565]
         self.y_boundary_range = [-340, 345]
-        self.z_boundary_range = [-40, 60] # need to be careful around the Control Panel / GUI
+        self.z_boundary_range = [-40, 50] # need to be careful around the Control Panel / GUI
 
 settings = SETTINGS()
 

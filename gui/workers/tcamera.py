@@ -17,6 +17,7 @@ class TCamera(QThread):
 
     def __run(self):
         #? take pic
+        d435 = None
         try:
             d435 = D435()
             # d435 = D435(load_json='')
@@ -32,8 +33,11 @@ class TCamera(QThread):
             else:
                 print(f'!!WARNING!! No Camera Detected')
                 return
+        except Exception as e:
+            print(f'!!Error!! During D435 initialization or data capture: \n{e}')
         finally:
-            d435.close()
+            if d435 is not None:
+                d435.close()
         
         #? get robot data
         data = get_req(path='robot', data={'name': 'transformation_data'})

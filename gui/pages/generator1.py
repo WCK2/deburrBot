@@ -255,7 +255,7 @@ if __name__ == "__main__":
     else: gui.showFullScreen()
     
     page.show()
-    input("")
+    sys.exit(app.exec_())
 
 
     

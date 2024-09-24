@@ -22,7 +22,7 @@ class TCamera(QThread):
             d435 = D435()
             # d435 = D435(load_json='')
 
-            if d435.camera_detected:
+            if d435.device is not None:
                 rgbd_data = d435.get_data(save=True)
                 rgbd_data, _ = rgbd_depth_filter(rgbd_data, 100, 1500)
                 idata.set_rgbd(rgbd_data)

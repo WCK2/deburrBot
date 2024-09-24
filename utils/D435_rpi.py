@@ -76,40 +76,59 @@ class D435:
         self.vp_data = kwargs.get('vp_data', self.vp_base + 'assets/data/')
         load_json = kwargs.get('load_json', self.vp_base + 'assets/configs/d435_default1.json')
 
-        self.camera_detected = self.check_for_camera()
+        self.device = self.get_device()
 
-        if not self.camera_detected:
+        if self.device is None:
             print(f'!!Warning!! Camera {self.camera} not detected')
         else:
             self.set_post_processing()
+            # self.log_camera_settings()
         
+            if os.path.isfile(load_json):
+                self.load_json_params(load_json)
+            else:
+                print(f'!!Warning!! No file exists at: <{load_json}>')
+            
+            self.device = self.get_device()
+            # self.log_camera_settings()
+            
             self.p = rs.pipeline()
             config = rs.config()
             config.enable_stream(rs.stream.depth, 848, 480, rs.format.z16, 30)
             config.enable_stream(rs.stream.color, 1280, 720, rs.format.rgb8, 30)
 
             self.profile = self.p.start(config)
-
-            if os.path.isfile(load_json):
-                self.load_json_params(load_json)
-            else:
-                print(f'!!Warning!! No file exists at: <{load_json}>')
-            
             self.init_intrinsics()
-            for i in range(5): self.p.wait_for_frames()
 
-    def check_for_camera(self):
+            for _ in range(5):
+                self.p.wait_for_frames()
+
+    def get_device(self):
         context = rs.context()
         devices = context.query_devices()
 
         if len(devices) == 0:
-            return False
+            return None
 
         for device in devices:
             if self.camera.lower() in device.get_info(rs.camera_info.name).lower():
-                return True
-        
-        return False
+                return device
+            # elif 'd415' in device.get_info(rs.camera_info.name).lower():
+            #     return device
+        return None
+
+
+    def log_camera_settings(self):
+        depth_sensor = self.device.first_depth_sensor()
+        if depth_sensor.supports(rs.option.depth_units):
+            depth_units = depth_sensor.get_option(rs.option.depth_units)
+            print(f'Depth units: {depth_units}')
+        else:
+            print('Depth units not supported')
+
+        depth_sensor = self.device.first_depth_sensor()
+        depth_scale = depth_sensor.get_depth_scale()
+        print(f'Depth scale: {depth_scale}')
 
     def set_post_processing(self):
         self.depth_to_disparity=rs.disparity_transform(True)
@@ -133,8 +152,8 @@ class D435:
         self.hole_filling.set_option(rs.option.holes_fill, 1)
 
     def load_json_params(self, filepath):
-        dev = self.profile.get_device()
-        advnc_mode = rs.rs400_advanced_mode(dev)
+        self.device = self.get_device()
+        advnc_mode = rs.rs400_advanced_mode(self.device)
 
         if not advnc_mode.is_enabled():
             print('Attempting to enable advanced mode...')
@@ -182,20 +201,6 @@ class D435:
             self.p.stop()
         except Exception as e:
             print(f'!!Warning!! Could not stop D435 pipeline...\n{e}')
-
-    def test_get_data(self):
-        frames = self.p.wait_for_frames()
-
-        depth_frame = frames.get_depth_frame()
-        depth = np.asanyarray(depth_frame.get_data())
-        depth_image = np.asanyarray((colorizer.colorize(depth_frame)).get_data())
-
-        color_frame = frames.get_color_frame()
-        colors_original = np.asanyarray(color_frame.get_data())
-
-        cv2.imwrite(self.vp_data + 'wc_depth.jpg', cv2.cvtColor(depth, cv2.COLOR_RGB2BGR))
-        cv2.imwrite(self.vp_data + 'depth_image.jpg', cv2.cvtColor(depth_image, cv2.COLOR_RGB2BGR))
-        cv2.imwrite(self.vp_data + 'colors_original.jpg', cv2.cvtColor(colors_original, cv2.COLOR_RGB2BGR))
 
     def get_data(self, n=10, save=False):
         for frame_idx in range(n):

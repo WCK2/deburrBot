@@ -25,7 +25,7 @@ class SETTINGS:
          return cls._instance
     
     def __init__(self): 
-        self.TESTING = True
+        self.TESTING = True if os.name == 'nt' else False
         if self.TESTING: print(f'\n--- TESTING MODE ---\n')
 
         #? gui

@@ -1,0 +1,224 @@
+>> PROGRAM START <<
+Server started at port 42000
+> server running
+CheckForceSensor()
+0.0
+CheckForceSensor()
+0.0
+18.87315502524376
+CheckForceSensor()
+19.294093741178514
+> jaka initialize success
+new_status: idle
+POST response: 200, {"status": "success"}
+>> Waiting for program number
+POST request: path=/mem, body={"name": "program", "value": "100"}
+> Program: 100
+new_status: running:100
+POST response: 200, {"status": "success"}
+new_status: idle:100
+> Finished with prog: 100
+
+POST response: 200, {"status": "success"}
+>> Waiting for program number
+POST request: path=/mem, body={"name": "generator1_target_pairs", "value": [[[375.393, -51.264, -29.192, 0.0, 0.0, 0.0], [376.117, -337.207, -31.091, 0.0, 0.0, 0.0]], [[431.487, 4.075, -25.993, 0.0, 0.0, 0.0], [434.656, -337.933, -33.192, 0.0, 0.0, 0.0]], [[451.511, 1.958, -27.993, 0.0, 0.0, 0.0], [453.719, -314.289, -32.792, 0.0, 0.0, 0.0]], [[471.135, -0.169, -28.993, 0.0, 0.0, 0.0], [469.456, -305.578, -25.492, 0.0, 0.0, 0.0]], [[489.4, 1.956, -27.193, 0.0, 0.0, 0.0], [486.204, -310.428, -20.792, 0.0, 0.0, 0.0]], [[510.343, 4.096, -30.694, 0.0, 0.0, 0.0], [510.915, -339.584, -31.792, 0.0, 0.0, 0.0]], [[528.087, 1.958, -27.994, 0.0, 0.0, 0.0], [532.127, -336.586, -35.492, 0.0, 0.0, 0.0]], [[547.454, -0.169, -28.394, 0.0, 0.0, 0.0], [550.693, -338.279, -34.192, 0.0, 0.0, 0.0]]]}
+POST request: path=/mem, body={"name": "program", "value": "1"}
+> Program: 1
+new_status: running:1
+POST response: 200, {"status": "success"}
+break_contact loop incremented to: 1
+break_contact loop incremented to: 2
+break_contact loop incremented to: 3
+break zcontact loop, with contact. (d=17.495479543060256)
+POST request: path=/mem, body={"name": "speed_multiplier", "value": 100}
+break_contact loop incremented to: 1
+break_contact loop incremented to: 2
+break_contact loop incremented to: 3
+break zcontact loop, with contact. (d=16.3216653347248)
+break_contact loop incremented to: 1
+break_contact loop incremented to: 2
+break_contact loop incremented to: 3
+break zcontact loop, with contact. (d=16.119814367469075)
+POST request: path=/mem, body={"name": "desired_force", "value": -4}
+POST request: path=/mem, body={"name": "speed_multiplier", "value": 150}
+break_contact loop incremented to: 1
+break_contact loop incremented to: 2
+break_contact loop incremented to: 3
+break zcontact loop, with contact. (d=16.403541023538196)
+break_contact loop incremented to: 1
+break_contact loop incremented to: 2
+break_contact loop incremented to: 3
+break zcontact loop, with contact. (d=16.540670206605753)
+POST request: path=/mem, body={"name": "speed_multiplier", "value": 100}
+break_contact loop incremented to: 1
+break_contact loop incremented to: 2
+break_contact loop incremented to: 3
+break zcontact loop, with contact. (d=16.806237196004133)
+break_contact loop incremented to: 1
+break_contact loop incremented to: 2
+break_contact loop incremented to: 3
+break zcontact loop, with contact. (d=16.904141614065097)
+break_contact loop incremented to: 1
+break_contact loop incremented to: 2
+break_contact loop incremented to: 3
+break zcontact loop, with contact. (d=16.940581886613643)
+new_status: idle:1
+> Finished with prog: 1
+
+POST response: 200, {"status": "success"}
+>> Waiting for program number
+POST request: path=/mem, body={"name": "program", "value": "100"}
+> Program: 100
+new_status: running:100
+POST response: 200, {"status": "success"}
+new_status: idle:100
+> Finished with prog: 100
+
+POST response: 200, {"status": "success"}
+>> Waiting for program number
+POST request: path=/mem, body={"name": "generator1_target_pairs", "value": [[[375.849, 4.095, -30.393, 0.0, 0.0, 0.0], [375.85, -336.965, -30.391, 0.0, 0.0, 0.0]], [[432.411, 6.211, -28.093, 0.0, 0.0, 0.0], [433.908, -337.345, -31.492, 0.0, 0.0, 0.0]], [[450.822, 6.2, -26.493, 0.0, 0.0, 0.0], [453.719, -314.289, -32.792, 0.0, 0.0, 0.0]], [[469.696, 6.197, -25.993, 0.0, 0.0, 0.0], [470.607, -306.334, -27.892, 0.0, 0.0, 0.0]], [[490.597, 6.221, -29.593, 0.0, 0.0, 0.0], [486.104, -310.364, -20.592, 0.0, 0.0, 0.0]], [[510.914, 6.236, -31.794, 0.0, 0.0, 0.0], [510.915, -337.449, -31.792, 0.0, 0.0, 0.0]], [[529.109, 6.223, -29.894, 0.0, 0.0, 0.0], [533.635, -337.548, -38.292, 0.0, 0.0, 0.0]], [[552.479, 6.273, -37.394, 0.0, 0.0, 0.0], [551.139, -336.414, -34.992, 0.0, 0.0, 0.0]]]}
+POST request: path=/mem, body={"name": "program", "value": "1"}
+> Program: 1
+new_status: running:1
+POST response: 200, {"status": "success"}
+POST request: path=/robot_DO, body={"name": "angle_grinder", "value": "toggle"}
+break_contact loop incremented to: 1
+break_contact loop incremented to: 2
+break_contact loop incremented to: 3
+break zcontact loop, with contact. (d=17.28053340963153)
+break_contact loop incremented to: 1
+break_contact loop incremented to: 2
+break_contact loop incremented to: 3
+break zcontact loop, with contact. (d=18.17182830550199)
+break_contact loop incremented to: 1
+break_contact loop incremented to: 2
+break_contact loop incremented to: 3
+break zcontact loop, with contact. (d=6.796487484254101)
+POST request: path=/mem, body={"name": "desired_force", "value": -5}
+break_contact loop incremented to: 1
+break_contact loop incremented to: 2
+break_contact loop incremented to: 3
+break zcontact loop, with contact. (d=10.653629759678239)
+POST request: path=/mem, body={"name": "speed_multiplier", "value": 75}
+break_contact loop incremented to: 1
+break_contact loop incremented to: 2
+break_contact loop incremented to: 3
+break zcontact loop, with contact. (d=16.486494426394003)
+break_contact loop incremented to: 1
+break_contact loop incremented to: 2
+break_contact loop incremented to: 3
+break zcontact loop, with contact. (d=17.474802036930484)
+break_contact loop incremented to: 1
+break_contact loop incremented to: 2
+break_contact loop incremented to: 3
+break zcontact loop, with contact. (d=1.0255639254331044)
+break_contact loop incremented to: 1
+break_contact loop incremented to: 2
+break_contact loop incremented to: 3
+break zcontact loop, with contact. (d=17.35235625495102)
+new_status: idle:1
+> Finished with prog: 1
+
+POST response: 200, {"status": "success"}
+>> Waiting for program number
+>> PROGRAM START <<
+Server started at port 42000
+> server running
+CheckForceSensor()
+18.44752918124199
+> jaka initialize success
+new_status: idle
+POST response: 200, {"status": "success"}
+>> Waiting for program number
+POST request: path=/mem, body={"name": "desired_force", "value": -6}
+POST request: path=/mem, body={"name": "program", "value": "100"}
+> Program: 100
+new_status: running:100
+POST response: 200, {"status": "success"}
+new_status: idle:100
+> Finished with prog: 100
+
+POST response: 200, {"status": "success"}
+>> Waiting for program number
+POST request: path=/mem, body={"name": "generator1_target_pairs", "value": [[[372.155, 6.162, -20.693, 0.0, 0.0, 0.0], [379.089, -337.754, -38.891, 0.0, 0.0, 0.0]], [[392.998, 8.313, -25.293, 0.0, 0.0, 0.0], [394.921, -338.992, -30.091, 0.0, 0.0, 0.0]], [[414.274, 8.359, -30.493, 0.0, 0.0, 0.0], [414.233, -339.096, -30.392, 0.0, 0.0, 0.0]], [[431.971, 8.329, -27.093, 0.0, 0.0, 0.0], [434.612, -335.761, -33.092, 0.0, 0.0, 0.0]], [[451.924, 8.345, -28.893, 0.0, 0.0, 0.0], [454.546, -312.727, -34.592, 0.0, 0.0, 0.0]], [[473.004, 8.38, -32.893, 0.0, 0.0, 0.0], [473.005, -305.773, -32.892, 0.0, 0.0, 0.0]], [[489.998, 8.34, -28.393, 0.0, 0.0, 0.0], [488.251, -309.628, -24.892, 0.0, 0.0, 0.0]], [[503.545, 8.244, -17.593, 0.0, 0.0, 0.0], [510.292, -334.902, -30.592, 0.0, 0.0, 0.0]], [[525.932, 8.301, -23.994, 0.0, 0.0, 0.0], [529.918, -333.043, -31.392, 0.0, 0.0, 0.0]], [[543.377, 6.164, -21.094, 0.0, 0.0, 0.0], [546.449, -333.527, -26.592, 0.0, 0.0, 0.0]]]}
+POST request: path=/mem, body={"name": "program", "value": "1"}
+> Program: 1
+new_status: running:1
+POST response: 200, {"status": "success"}
+POST request: path=/robot_DO, body={"name": "angle_grinder", "value": "toggle"}
+POST request: path=/mem, body={"name": "desired_force", "value": -7}
+break_contact loop incremented to: 1
+break_contact loop incremented to: 2
+break_contact loop incremented to: 3
+break_contact loop incremented to: 4
+break zcontact loop, with contact. (d=18.84815456639933)
+break_contact loop incremented to: 1
+break_contact loop incremented to: 2
+break_contact loop incremented to: 3
+break_contact loop incremented to: 4
+break zcontact loop, with contact. (d=17.838771757327876)
+break_contact loop incremented to: 1
+break_contact loop incremented to: 2
+break_contact loop incremented to: 3
+break_contact loop incremented to: 4
+break zcontact loop, with contact. (d=18.342222511540612)
+break_contact loop incremented to: 1
+break_contact loop incremented to: 2
+break_contact loop incremented to: 3
+break_contact loop incremented to: 4
+break zcontact loop, with contact. (d=18.050621934666424)
+break_contact loop incremented to: 1
+break_contact loop incremented to: 2
+break_contact loop incremented to: 3
+break_contact loop incremented to: 4
+break zcontact loop, with contact. (d=17.340928576830137)
+break_contact loop incremented to: 1
+break_contact loop incremented to: 2
+break_contact loop incremented to: 3
+break_contact loop incremented to: 4
+break zcontact loop, with contact. (d=18.06914976423512)
+break_contact loop incremented to: 1
+break_contact loop incremented to: 2
+break_contact loop incremented to: 3
+break_contact loop incremented to: 4
+break zcontact loop, with contact. (d=17.383787702611173)
+break_contact loop incremented to: 1
+break_contact loop incremented to: 2
+break_contact loop incremented to: 3
+break_contact loop incremented to: 4
+break zcontact loop, with contact. (d=18.584150147513142)
+break_contact loop incremented to: 1
+break_contact loop incremented to: 2
+break_contact loop incremented to: 3
+break_contact loop incremented to: 4
+break zcontact loop, with contact. (d=18.023818358721385)
+break_contact loop incremented to: 1
+break_contact loop incremented to: 2
+break_contact loop incremented to: 3
+break_contact loop incremented to: 4
+break zcontact loop, with contact. (d=18.191256790999972)
+new_status: idle:1
+> Finished with prog: 1
+
+POST response: 200, {"status": "success"}
+>> Waiting for program number
+[1;31;43m !! ==================== EXCEPTION: nos.exception.Error ==================== !! [0;0m
+[0;33m > msg:[0;0m Raised ERROR: status[2]: 0
+[0;33m > tb : [0;0m[1;30m"main.py", line 62, in <module>
+        "main.py", line 14, in main
+        "/home/jakauser/repos/deburrBot/header.py", line 29, in CheckRobotFlags
+        [0;0m 
+> crash()
+new_status: crash
+> JAKA is Connected
+[1;31;43m !! Restarting in 10 POST response: 200, {"status": "success"}
+. . . . . . . . . . [0;0m
+>> PROGRAM START <<
+Server started at port 42000
+> server running
+CheckForceSensor()
+18.896894720792773
+> jaka initialize success
+new_status: idle
+POST response: 200, {"status": "success"}
+>> Waiting for program number

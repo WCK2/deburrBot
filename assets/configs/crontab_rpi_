@@ -1,0 +1,1 @@
+@reboot sleep 5 && /bin/bash /home/will/repos/deburrBot/utils/scripts/run_gui.sh

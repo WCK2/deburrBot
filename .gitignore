@@ -6,6 +6,7 @@ temp/*
 
 assets/temp/*
 assets/solidworks/*
+assets/logs/*
 
 assets/models/**/*.pt
 

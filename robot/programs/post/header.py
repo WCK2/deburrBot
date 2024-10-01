@@ -387,7 +387,7 @@ def force_target_pair_run(t_start: list, t_end: list, zcontact: bool=True, easeo
     t_easeon = t_start.copy()
     # t_easeon[2] += easeon #! May want to just set this to (0 + easeon) as long as the given part isnt super tall (3d)
     t_easeon[2] = easeon #! ... like so lol
-    robot.movel(t_easeon, speed=40)
+    robot.movel(t_easeon, speed=50)
     robot.waitmove()
 
     robot.servo_move_use_joint_LPF(0.4)
@@ -408,11 +408,11 @@ def force_target_pair_run(t_start: list, t_end: list, zcontact: bool=True, easeo
                 break
 
             zero_forces = robot.get_zeroforce()
-            error = mem.desired_force - zero_forces[2]
+            error = (mem.desired_force * 1.5) - zero_forces[2]
             if error > 0:
                 break_counter += 1
                 print(f'break_contact loop incremented to: {break_counter}')
-                if break_counter >= 3:
+                if break_counter >= 4:
                     print(f'break zcontact loop, with contact. (d={d})')
                     break
 
@@ -542,7 +542,7 @@ def force_target_pair_run(t_start: list, t_end: list, zcontact: bool=True, easeo
     # t_easeoff = t_end.copy()
     t_easeoff = robot.get_tcp_pose()
     t_easeoff[2] += easeoff
-    robot.movel(t_easeoff, speed=40)
+    robot.movel(t_easeoff, speed=50)
     robot.waitmove()
 
 

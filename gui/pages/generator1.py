@@ -5,6 +5,7 @@ from gui.qt.common import *
 from gui.workers.tcamera import TCamera
 from utils.config import idata, settings
 from gui.workers.tpost import post_req_async
+from gui.qt.ngif import NGif
 
 
 class GENERATOR1(NFrame):
@@ -79,6 +80,12 @@ class GENERATOR1(NFrame):
         page_layout.addLayout(layout)
         page_layout.addStretch()
 
+        #~ Gifs
+        self.loading_gif = NGif('wait.gif', parent=container)
+        self.loading_gif.setGeometry(QRect(0, 0, 250, 250))
+        self.loading_gif.setAttribute(Qt.WA_TransparentForMouseEvents, True)
+        self.loading_gif.hide()
+
         #~ Threads
         self.thread_camera = TCamera()
         self.thread_camera.finished.connect(self.__thread_camera_finished)
@@ -106,6 +113,11 @@ class GENERATOR1(NFrame):
     def __resizeimgbtn(self):
         qrect = self.label_img.geometry()
         self.btn_img.setGeometry(qrect.translated(settings.panel_width, 0))
+
+    def __setup_loading_graphic(self):
+        new_x = self.label_img.geometry().x() + (self.label_img.geometry().width() - self.loading_gif.width()) / 2
+        new_y = self.label_img.geometry().y() + (self.label_img.geometry().height() - self.loading_gif.height()) / 2
+        self.loading_gif.move(int(new_x), int(new_y))
 
     #? add points / remove / generate / clear
     def __onimgbtn(self):        
@@ -152,6 +164,7 @@ class GENERATOR1(NFrame):
         self.btn_new_picture.setEnabled(False)
         self.btn_generate.setEnabled(False)
         self.btn_start.setEnabled(False)
+        self.loading_gif.show()
 
         self.thread_camera.run()
 
@@ -165,6 +178,7 @@ class GENERATOR1(NFrame):
             self.btn_generate.setEnabled(False)
 
     def __tsam_set_finished(self):
+        self.loading_gif.hide()
         if self.star_objs:
             self.btn_generate.setEnabled(True)
 
@@ -183,7 +197,10 @@ class GENERATOR1(NFrame):
             self.btn_start.setEnabled(True)
 
     def __on_start(self):
-        pass
+        if tsam.target_pairs_post_status:
+            post_req_async(path='mem', data={'name': 'program', 'value': str(1)})
+            self.btn_start.setEnabled(False)
+        # TODO reset buttons ... and img? idk reset tsam.target_pairs_post_status?
 
     def __on_clear(self):
         # self.btn_generate.setEnabled(False)
@@ -202,8 +219,6 @@ class GENERATOR1(NFrame):
             star.deleteLater()
         
 
-    #? panel buttons
-
     #? PyQt Events
     def showEvent(self, a0):
         self.btn_new_picture.setEnabled(True)
@@ -213,6 +228,10 @@ class GENERATOR1(NFrame):
 
         self.__setupimg(img=None)
         self.__resizeimgbtn()
+        return super().enterEvent(a0)
+
+    def enterEvent(self, a0):
+        self.__setup_loading_graphic()
         return super().enterEvent(a0)
 
     def hideEvent(self, a0) -> None: 
@@ -236,7 +255,7 @@ if __name__ == "__main__":
     else: gui.showFullScreen()
     
     page.show()
-    input("")
+    sys.exit(app.exec_())
 
 
     

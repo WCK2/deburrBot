@@ -43,6 +43,10 @@ class HOME(NFrame):
         self.btn_change_pad_pose = ProgramPushButton(102, objectName='btn', text='Change Pad\nPosition')
         self.btn_freedrive = ProgramPushButton(103, objectName='btn', text='Freedrive')
 
+        self.label_system = QLabel(objectName='header', text='System')
+        self.btn_shutdown = QPushButton(objectName='btn', text='Shutdown')
+        self.btn_shutdown.clicked.connect(self.__on_confirm_shutdown)
+
         #~ layout
         # layout.addItem(QSpacerItem(10, 10, QSizePolicy.Minimum, QSizePolicy.Fixed))
         layout.addWidget(self.label_toggle_outputs, 0, 0, 1, 3, alignment=Qt.AlignCenter) # Row 0, Column 0, Span 1 row and 4 columns
@@ -50,9 +54,9 @@ class HOME(NFrame):
         layout.addWidget(self.btn_angle_grinder, 1, 1)
         layout.addWidget(QPushButton(objectName='btn', text='-'), 1, 2)
 
-        layout.addItem(QSpacerItem(10, 10, QSizePolicy.Minimum, QSizePolicy.Fixed), 2, 0, 1, 3)  # Spacer between rows
+        layout.addItem(QSpacerItem(10, 10, QSizePolicy.Minimum, QSizePolicy.Fixed), 2, 0, 1, 3)
 
-        layout.addWidget(self.label_quick_programs, 3, 0, 1, 3, alignment=Qt.AlignCenter) # Row 0, Column 0, Span 1 row and 4 columns
+        layout.addWidget(self.label_quick_programs, 3, 0, 1, 3, alignment=Qt.AlignCenter)
         layout.addWidget(self.btn_picture_pose, 4, 0)
         layout.addWidget(self.btn_home_pose, 4, 1)
         layout.addWidget(self.btn_change_pad_pose, 4, 2)
@@ -60,9 +64,14 @@ class HOME(NFrame):
         layout.addWidget(QPushButton(objectName='btn', text='-'), 5, 1)
         layout.addWidget(QPushButton(objectName='btn', text='-'), 5, 2)
 
-        layout.addItem(QSpacerItem(10, 10, QSizePolicy.Minimum, QSizePolicy.Fixed), 6, 0, 1, 3)  # Spacer between rows
+        layout.addItem(QSpacerItem(10, 10, QSizePolicy.Minimum, QSizePolicy.Fixed), 6, 0, 1, 3)
 
+        layout.addWidget(self.label_system, 7, 0, 1, 3, alignment=Qt.AlignCenter)
+        layout.addWidget(self.btn_shutdown, 8, 0)
+        layout.addWidget(QPushButton(objectName='btn', text='-'), 8, 1)
+        layout.addWidget(QPushButton(objectName='btn', text='-'), 8, 2)
 
+        layout.addItem(QSpacerItem(10, 10, QSizePolicy.Minimum, QSizePolicy.Fixed), 9, 0, 1, 3)
 
         #~ add layouts
         self.side_panel = SidePanel(self)
@@ -73,9 +82,27 @@ class HOME(NFrame):
 
         #~ Threads
 
+    #? shutdown
+    def __on_confirm_shutdown(self):
+        message_box = QMessageBox(self)
+        message_box.setObjectName('confirmShutdownBox')
+        message_box.setWindowTitle('Confirm Shutdown')
+        message_box.setText('Are you sure you want to shutdown the system?')
+        message_box.setStandardButtons(QMessageBox.Yes | QMessageBox.No)
+        message_box.setDefaultButton(QMessageBox.No)
 
-    #? 
+        reply = message_box.exec_()
 
+        if reply == QMessageBox.Yes:
+            self.__shutdown_system()
+
+    def __shutdown_system(self):
+        print(f'__shutdown_system')
+        QApplication.quit()
+
+        if os.name != 'nt':
+            os.system("echo hi1 && sleep 10 && echo hi2")
+            # os.system("sleep 10 && sudo shutdown -h now")
 
     #? PyQt Events
     def showEvent(self, a0):
@@ -104,7 +131,7 @@ if __name__ == "__main__":
     else: gui.showFullScreen()
     
     page.show()
-    input("")
+    sys.exit(app.exec_())
 
 
     

@@ -1,5 +1,6 @@
 import os
 import copy
+import math
 import numpy as np
 import cv2
 import matplotlib.patches as patches
@@ -173,8 +174,13 @@ def rgbd_imshow(**kwargs):
         ax.set_title(var_name)
         ax.axis('off')
     
-    mngr=plt.get_current_fig_manager()
-    mngr.window.wm_geometry('+0+0')
+    mngr = plt.get_current_fig_manager()
+    # mngr.window.wm_geometry('+0+0')
+    try:
+        mngr.window.setGeometry(0, 0, fig.get_figwidth() * 100, fig.get_figheight() * 100)
+    except AttributeError:
+        pass  # Ignore if setGeometry isn't available (e.g., on non-GUI backends)
+
     plt.tight_layout()
     plt.show()
 
@@ -352,7 +358,7 @@ def apply_tool_padding_to_obstacles(obstacle_mask, vertices, folder):
     return final_obstacle_mask
 
 
-def top_down_stripes(roi_mask, draw_img, tool_pixel_diameter=40):
+def top_down_stripes(roi_mask, draw_img, tool_pixel_diameter, width_mm_per_pixel, height_mm_per_pixel, min_keep_distance=10):
     # print(roi_mask.shape, roi_mask.dtype)
     d = int(tool_pixel_diameter)
     color = (0, 255, 0)
@@ -382,10 +388,25 @@ def top_down_stripes(roi_mask, draw_img, tool_pixel_diameter=40):
             segments = np.split(line_indices, gaps + 1)
 
             for line in segments:
-                coordinate_pairs.append([[col, int(line[0])], [col, int(line[-1])]])
-                cv2.arrowedLine(draw_img, (coordinate_pairs[-1][0][0], coordinate_pairs[-1][0][1]), (coordinate_pairs[-1][1][0], coordinate_pairs[-1][1][1]), color, thickness, tipLength=arrow_tip_length)
+                t_start = [col, int(line[0])]
+                t_end = [col, int(line[-1])]
 
-    print(f'\ncoordinate_pairs: {coordinate_pairs}\n')
+                delta_x_pixels = t_end[0] - t_start[0]
+                delta_y_pixels = t_end[1] - t_start[1]
+
+                delta_x_mm = delta_x_pixels * width_mm_per_pixel
+                delta_y_mm = delta_y_pixels * height_mm_per_pixel
+
+                distance_mm = math.sqrt(delta_x_mm**2 + delta_y_mm**2)
+                # print(f'distance_mm: {distance_mm}')
+
+                if distance_mm > min_keep_distance:
+                    coordinate_pairs.append([t_start, t_end])
+                    cv2.arrowedLine(draw_img, (coordinate_pairs[-1][0][0], coordinate_pairs[-1][0][1]), (coordinate_pairs[-1][1][0], coordinate_pairs[-1][1][1]), color, thickness, tipLength=arrow_tip_length)
+                else:
+                    print(f'skipping coordinate_pair {t_start}, {t_end} with distance_mm of {distance_mm} mm')
+
+    # print(f'\ncoordinate_pairs: {coordinate_pairs}\n')
     # plt_imshow(draw_img)
     return coordinate_pairs, draw_img
 

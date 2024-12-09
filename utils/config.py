@@ -10,6 +10,7 @@ class VPath:
     def __init__(self) -> None:
         self.assets = os.getcwd() + '/assets/'
         self.data = os.getcwd() + '/assets/data/'
+        self.gif = os.getcwd() + '/assets/gif/'
         self.images = os.getcwd() + '/assets/images/'
         self.models = os.getcwd() + '/assets/models/'
 
@@ -24,7 +25,8 @@ class SETTINGS:
          return cls._instance
     
     def __init__(self): 
-        self.TESTING = False
+        self.TESTING = True if os.name == 'nt' else False
+        if self.TESTING: print(f'\n--- TESTING MODE ---\n')
 
         #? gui
         self.label_img_width = 832
@@ -34,7 +36,7 @@ class SETTINGS:
         #? Server / Network
         self.rpi_port = 42001
 
-        self.robot_ip = '192.168.69.120'
+        self.robot_ip = '192.168.69.120' if os.name == 'nt' else '192.168.69.60'
         # self.robot_ip = '192.168.69.170'
         self.robot_port = 42000
         self.robot_url = f'http://{self.robot_ip}:{self.robot_port}/'
@@ -69,6 +71,9 @@ class IMAGE_DATA:
         self.robot_pose = [0,0,0,0,0,0]
         self.robot_camera_tool = [0,0,0,0,0,0]
 
+        self.x_boundary_range = [0,0]
+        self.y_boundary_range = [0,0]
+        self.z_boundary_range = [0,0]
 
     def set_rgbd(self, rgbd_data):
         self.colors = copy.deepcopy(rgbd_data.colors) # 360, 640

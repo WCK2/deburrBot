@@ -6,12 +6,16 @@ temp/*
 
 assets/temp/*
 assets/solidworks/*
+assets/logs/*
+!**/gui_log_2024_09_09_13_38_38.log
+!**/robot_log_2024_09_25_05_24_31.log
 
 assets/models/**/*.pt
 
 assets/data/*
 !**/d435_2024-08-22_14-22-56
-
+!**/d435_2024-09-19_09-25-47
+!**/d435_2024-09-19_12-45-25
 
 
 

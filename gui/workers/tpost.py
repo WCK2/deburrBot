@@ -16,6 +16,9 @@ def post_req_async(path, data):
         try:
             response = requests.post(url, json=data, timeout=5)
             print(f'POST response: {response.status_code}, {response.text}')
+        except requests.Timeout:
+            print("The request timed out.")
+            return None
         except requests.RequestException as e:
             print(f'Error sending POST request: {e}')
 
@@ -53,7 +56,6 @@ def post_req_sync(path, data):
             print("Received non-JSON, non-HTML response.")
             return response.text  # You might still want to return the raw text for other content types
 
-
     except requests.Timeout:
         print("The request timed out.")
         return None
@@ -67,7 +69,7 @@ def get_req(path, data=None):
     url = settings.robot_url + path
 
     try:
-        response = requests.get(url, params=data)
+        response = requests.get(url, params=data, timeout=5)
 
         # Check if the request was successful
         if response.status_code == 200:
@@ -82,6 +84,9 @@ def get_req(path, data=None):
         else:
             print(f"Error: {response.status_code} - {response.text}")
 
+    except requests.exceptions.Timeout:
+        print("The request timed out.")
+        return None
     except requests.exceptions.RequestException as e:
         print(f"Request failed: {e}")
         return None

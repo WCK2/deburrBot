@@ -6,6 +6,7 @@ from utils.D435_rpi import D435, rgbd_read_data
 from utils.config import settings, idata
 from utils.memory import mem
 from gui.workers.tpost import get_req
+from utils.img_processing import rgbd_depth_filter
 
 
 class TCamera(QThread):
@@ -16,21 +17,27 @@ class TCamera(QThread):
 
     def __run(self):
         #? take pic
-        if settings.TESTING:
-            d435 = D435(load_json='')
-        else:
+        d435 = None
+        try:
             d435 = D435()
+            # d435 = D435(load_json='')
 
-        if d435.camera_detected:
-            rgbd_data = d435.get_data(save=True)
-            idata.set_rgbd(rgbd_data)
-            d435.close()
-        elif settings.TESTING:
-            rgbd_data = rgbd_read_data('d435_2024-08-22_14-22-56')
-            idata.set_rgbd(rgbd_data)
-        else:
-            print(f'!!WARNING!! No Camera Detected')
-            return
+            if d435.device is not None:
+                rgbd_data = d435.get_data(save=True)
+                rgbd_data, _ = rgbd_depth_filter(rgbd_data, 100, 1500)
+                idata.set_rgbd(rgbd_data)
+            elif settings.TESTING:
+                rgbd_data = rgbd_read_data('d435_2024-09-19_09-25-47')
+                rgbd_data, _ = rgbd_depth_filter(rgbd_data, 100, 1500)
+                idata.set_rgbd(rgbd_data)
+            else:
+                print(f'!!WARNING!! No Camera Detected')
+                return
+        except Exception as e:
+            print(f'!!Error!! During D435 initialization or data capture: \n{e}')
+        finally:
+            if d435 is not None:
+                d435.close()
         
         #? get robot data
         data = get_req(path='robot', data={'name': 'transformation_data'})
@@ -39,17 +46,23 @@ class TCamera(QThread):
                 print(f'!!WARNING!! Unable to get transformation_data from the robot server')
                 return
             data = {
-                'frame': [-809.075, -11.325, -100.975, -0.18, 0.01, 95.34],
-                'tool': [-133.368, 77.0, 200.0, -170.0, 0.0, -120.0],
-                'pose': [186.501, -154.541, 177.739, 10, -11.25, -90],
-                'camera_tool': [81.943, 76.054, 48.418, 15.16, -0.332, 149.98]
+                'frame': [-809.075, -11.325, -100.975, -0.180246, -0.0034, 91.08],
+                'tool': [-139.39, 64.585, 199.93, -169.95, 0.288, -115.89],
+                'pose': [190.32, -151.19, 832.05, 11.618, -15.506, -94.229],
+                'camera_tool': [78.21, 73.4, 50.54, 15.29, -0.46, 150.04],
+                'x_boundary_range': [-565, 565],
+                'y_boundary_range': [-340, 345],
+                'z_boundary_range': [-40, 60]
             }
         
-        print(f'transformation_data:\n{data}')
+        # print(f'transformation_data:\n{data}')
         idata.robot_frame = data['frame']
         idata.robot_tool = data['tool']
         idata.robot_pose = data['pose']
         idata.robot_camera_tool = data['camera_tool']
+        idata.x_boundary_range = data['x_boundary_range']
+        idata.y_boundary_range = data['y_boundary_range']
+        idata.z_boundary_range = data['z_boundary_range']
 
         self.finished.emit()
 

@@ -1,0 +1,33 @@
+# ----- environment -----
+#export LD_LIBRARY_PATH=/usr/local/lib:$LD_LIBRARY_PATH
+#export PYTHONPATH=$PYTHONPATH:/usr/local/lib
+
+export PYTHONPATH=$PYTHONPATH:/usr/local/lib/python3.9/site-packages:/home/will/librealsense/build/Release/:/home/will/repos/deburrBot
+export LD_LIBRARY_PATH=/usr/local/lib:$LD_LIBRARY_PATH
+
+
+# PYTHONPATH=$PYTHONPATH:/usr/local/lib:/home/will/repos/noslibs/python/lib:/home/will/repos/deburrBot:/home/will/repos/rgbd
+# export PYTHONPATH
+
+# export DISPLAY=:0
+# export XDG_RUNTIME_DIR=/run/user/1000
+
+
+
+# ----- alias -----
+# screen
+alias sr='screen -r'
+alias sl='screen -list'
+
+# logitech
+alias cam_settings='v4l2-ctl --list-ctrls'
+
+# rc
+alias wrc='source ~/.willrc'
+
+
+
+# ----- misc -----
+# cat /sys/class/drm/card1-HDMI-A-1/status
+# dmesg
+# lusb

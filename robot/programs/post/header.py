@@ -385,8 +385,9 @@ def force_target_pair_run(t_start: list, t_end: list, zcontact: bool=True, easeo
 
     #? ease on
     t_easeon = t_start.copy()
-    t_easeon[2] += easeon
-    robot.movel(t_easeon, speed=15)
+    # t_easeon[2] += easeon #! May want to just set this to (0 + easeon) as long as the given part isnt super tall (3d)
+    t_easeon[2] = easeon #! ... like so lol
+    robot.movel(t_easeon, speed=50)
     robot.waitmove()
 
     robot.servo_move_use_joint_LPF(0.4)
@@ -397,18 +398,23 @@ def force_target_pair_run(t_start: list, t_end: list, zcontact: bool=True, easeo
     if zcontact:
         counter = 0
         zstep = 0
+        break_counter = 0
+        no_contact_tolerance = 5
         pstart = robot.get_tcp_pose()
         while True:
             d = abs(robot.get_tcp_pose()[2] - pstart[2])
-            if d > easeon:
+            if d > (easeon + no_contact_tolerance):
                 print(f'break zcontact loop, without contact. (d={d})')
                 break
 
             zero_forces = robot.get_zeroforce()
-            error = mem.desired_force - zero_forces[2]
+            error = (mem.desired_force * 1.5) - zero_forces[2]
             if error > 0:
-                print(f'break zcontact loop, with contact. (d={d})')
-                break
+                break_counter += 1
+                print(f'break_contact loop incremented to: {break_counter}')
+                if break_counter >= 4:
+                    print(f'break zcontact loop, with contact. (d={d})')
+                    break
 
             pid.integral += error * 0.004  # dt is approximately 0.004 seconds
 
@@ -428,7 +434,7 @@ def force_target_pair_run(t_start: list, t_end: list, zcontact: bool=True, easeo
             pid.previous_zstep = zstep
 
             # limit the step size to max_step
-            zstep = max(min(zstep, pid.max_step), -pid.max_step)
+            zstep = max(min(zstep, pid.max_step*5), -pid.max_step*5)
             current_speed_multiplier = mem.speed_multiplier
             zstep *= current_speed_multiplier
 
@@ -525,7 +531,7 @@ def force_target_pair_run(t_start: list, t_end: list, zcontact: bool=True, easeo
     robot.waitmove()
     robot.servo_move_enable(False)
     robot.waitmove()
-    time.sleep(1)
+    time.sleep(0.1)
 
     # Compress and save the data using pickle and gzip
     filename = os.getcwd() + f'/assets/temp/data_log_{time.strftime("%Y-%m-%d_%H-%M-%S")}.pkl.gz'
@@ -533,9 +539,10 @@ def force_target_pair_run(t_start: list, t_end: list, zcontact: bool=True, easeo
         pickle.dump(data_log, f)
     
     #? ease off
-    t_easeoff = t_end.copy()
+    # t_easeoff = t_end.copy()
+    t_easeoff = robot.get_tcp_pose()
     t_easeoff[2] += easeoff
-    robot.movel(t_easeoff, speed=15)
+    robot.movel(t_easeoff, speed=50)
     robot.waitmove()
 
 
@@ -543,26 +550,25 @@ def force_target_pair_run(t_start: list, t_end: list, zcontact: bool=True, easeo
 
 #~ Programs
 def generator1_deburring_program():
-    return
-    robot.movej(settings.home_joints, speed=15)
+    robot.movej(settings.home_joints, speed=25)
     robot.waitmove()
 
     ZeroForceSensor()
-    robot.set_DO(settings.angle_grinder_pin, True)
+    # robot.set_DO(settings.angle_grinder_pin, True)
     
     target_pairs = mem.generator1_target_pairs
     for pair in target_pairs:
         t_start = pair[0]
         t_end = pair[1]
         if len(t_start) != 6 or len(t_end) != 6:
-            print(f'!!WARNING!! targets are incorrect length. {pair}')
+            print(f'!!WARNING!! target pair list(s) are incorrect length. {pair}')
             continue
-        force_target_pair_run(t_start, t_end, zcontact=True, easeon=20, easeoff=20)
+        force_target_pair_run(t_start, t_end, zcontact=True, easeon=15, easeoff=30)
 
     robot.waitmove()
     robot.set_DO(settings.angle_grinder_pin, False)
-    robot.movej(settings.home_joints, speed=15)
-    robot.movej(settings.picture_joints, speed=15)
+    robot.movej(settings.home_joints, speed=25)
+    robot.movej(settings.picture_joints, speed=25)
     mem.generator1_target_pairs = []
     robot.waitmove()
 
@@ -575,8 +581,9 @@ def StartRun(p):
     if robot.is_in_drag_mode()[1]:
         robot.drag_mode_enable(False)
 
-    robot.set_frame(settings.workstation_frame)
-    robot.set_tool(settings.grinder_tool)
+    robot.set_frame(list(settings.workstation_frame))
+    robot.set_tool(list(settings.grinder_tool))
+    robot.waitmove()
 
 def EndRun(p):
     robot.waitmove()
@@ -584,10 +591,12 @@ def EndRun(p):
 
 def SelectProgram(p):
     if p==0: pass
-    # elif p==1: generator1_deburring_program()
-    # elif p==100: robot.movej(settings.picture_joints, speed=15)
-    # elif p==101: robot.movej(settings.home_joints, speed=15)
-    # elif p==102: pass
+    elif p==1: generator1_deburring_program()
+    elif p==100:
+        robot.movej(settings.picture_joints, speed=15)
+    elif p==101:
+        robot.movej(settings.home_joints, speed=15)
+    # elif p==102: robot.movej(settings.change_pad_joints, speed=15)
     # elif p==103:
     #     b = robot.is_in_drag_mode()[1]
     #     toggle = not b

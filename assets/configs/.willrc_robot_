@@ -1,0 +1,75 @@
+#==============================================================
+# nosrc
+#==============================================================
+MACHINE_NAME=deburrBot
+export PS1="\[\033[38;5;2m\][\[$(tput sgr0)\]\[\033[38;5;10m\]\t\[$(tput sgr0)\]\[\033[38;5;2m\]]\[$(tput sgr0)\]\[\033[38;5;10m\]$MACHINE_NAME\[$(tput sgr0)\]:\[$(tput sgr0)\]\[\033[38;5;27m\]\w\[$(tput sgr0) \]"
+alias rc='nano /home/jakauser/.nosrc ; . /home/jakauser/.bashrc'
+alias bashrc='nano /home/jakauser/.bashrc ; . /home/jakauser/.bashrc'
+
+#==============================================================
+# environment variables
+#==============================================================
+SCREENDIR=/home/jakauser/programs/screen
+export SCREENDIR
+
+PYTHONPATH=/home/jakauser/lib/python
+export PYTHONPATH
+
+LD_LIBRARY_PATH=$PYTHONPATH/jaka/jkrc:$SCREENDIR
+export LD_LIBRARY_PATH
+
+paths=($SCREENDIR /home/jakauser/bin /usr/local/bin /usr/bin /bin /usr/local/JAKA/JKVision /opt/pylon5/lib64 /opt/pylon5/lib64/gentlproducer/gtl)
+for p in "${paths[@]}"; do
+    [[ ":$PATH:" != *":$p:"* ]] && [[ -d "$p" ]] && PATH="$p":"$PATH"
+done
+export PATH
+
+#==============================================================
+# functions and what not
+#==============================================================
+info(){
+    echo ===============================
+    echo = Hello from $MACHINE_NAME
+    echo ===============================
+    echo user: $(whoami)
+    echo os: $(uname -a)
+    echo distro: $(cat /etc/issue.net)
+    echo hostname: $(hostname -I)
+    echo " "
+}
+if [ ! -f ~/.screenrc ] ; then
+    touch ~/.screenrc
+    printf "altscreen on\nterm xterm-256color\n" >> ~/.screenrc
+fi
+if [ ! -f ~/.nanorc ] ; then
+    touch ~/.nanorc
+    printf "set tabsize 4\nset tabstospaces\n" >> ~/.nanorc
+fi
+
+pipe_timestamp(){
+    while IFS= read -r line
+        do printf '[%s] %s\n' "$(date '+%H:%M:%S')" "$line"
+    done
+}
+
+screen_stuff(){
+    screen_name="$1"
+    cmd="$2"
+    screen -S "$screen_name" -dm
+    screen -S "$screen_name" -X stuff 'exec bash ^M'
+    screen -S "$screen_name" -X stuff '. /root/.bashrc ^M'
+    screen -S "$screen_name" -X stuff "$cmd"'^M'
+}
+
+#==============================================================
+# alias and other variables
+#==============================================================
+#alias screen=/home/jakauser/programs/screen/screen
+alias sr="screen -r"
+alias python='python3 -u'
+alias psa="ps -aux | grep"
+alias rr="screen -RR"
+alias cte="crontab -e"
+
+
+alias sl="screen -list"

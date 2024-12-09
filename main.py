@@ -48,5 +48,5 @@ if __name__ == "__main__":
     else:
         app.showFullScreen()
 
-    input("")
+    sys.exit(qapp.exec_())
 

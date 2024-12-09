@@ -47,6 +47,35 @@
 }
 
 /*===================================================
+ * QMessageBox - Confirmation Box
+===================================================*/
+#confirmShutdownBox {
+    background-color: rgb(0, 0, 0);
+    color: rgb(255, 255, 255);
+    padding: 10px;
+}
+
+#confirmShutdownBox QLabel {
+    color: rgb(255, 255, 255);
+    font-size: 28px;
+}
+
+#confirmShutdownBox QPushButton {
+    background-color: rgb(50, 50, 50);
+    border: 1px solid rgb(255, 255, 255);
+    color: rgb(255, 255, 255);
+    font-size: 26px;
+    padding: 5px 35px; /* padding: top & bottom, left & right */
+    margin: 20px;
+}
+
+#confirmShutdownBox QPushButton:pressed {
+    background-color: rgb(75, 75, 75);
+    border: 2px solid rgb(255, 255, 255);
+    font-size: 24px;
+}
+
+/*===================================================
  * panel
 ===================================================*/
 #panel #title{

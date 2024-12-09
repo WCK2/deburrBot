@@ -1,0 +1,12 @@
+[Desktop Entry]
+Type=Application
+Name=Run DeburrBot GUI
+Comment=Execute deburrBot's "run GUI" shell script
+Exec=/home/will/repos/deburrBot/utils/scripts/run_gui.sh
+Icon=utilities-terminal # can add path to png instead
+Terminal=true
+Categories=Utility;
+
+# Reminders:
+# chmod +x desktop and shell files
+# File Manager > Edit > Preferences > General > check "Don't ask options on launch executable file"

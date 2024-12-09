@@ -174,8 +174,13 @@ def rgbd_imshow(**kwargs):
         ax.set_title(var_name)
         ax.axis('off')
     
-    mngr=plt.get_current_fig_manager()
-    mngr.window.wm_geometry('+0+0')
+    mngr = plt.get_current_fig_manager()
+    # mngr.window.wm_geometry('+0+0')
+    try:
+        mngr.window.setGeometry(0, 0, fig.get_figwidth() * 100, fig.get_figheight() * 100)
+    except AttributeError:
+        pass  # Ignore if setGeometry isn't available (e.g., on non-GUI backends)
+
     plt.tight_layout()
     plt.show()
 

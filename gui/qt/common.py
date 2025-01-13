@@ -6,6 +6,7 @@ from utils.memory import mem
 from gui.workers.tserver import server
 from gui.workers.tmobileSAM import TMobileSAM
 from gui.qt.panel import SidePanel
+from gui.workers.tcustom import TCustom
 
 
 signal.signal(signal.SIGINT, signal.SIG_DFL)    
@@ -28,6 +29,7 @@ class GlobalSignals(QObject):
 gsig = GlobalSignals()
 server.run_server()
 tsam = TMobileSAM()
+tcustom = TCustom()
 
 
 class SidePanel(SidePanel):

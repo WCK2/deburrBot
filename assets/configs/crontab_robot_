@@ -1,4 +1,4 @@
-@reboot sleep 5 && /usr/bin/env bash -c '. /home/jakauser/repos/deburrBot/run_main.sh'
+@reboot sleep 10 && /usr/bin/env bash -c '. /home/jakauser/repos/deburrBot/run_main.sh'
 # Make sure to give this shell script the correct file permissions ^^
 # deskjaka shell script: chmod 744
 # deskjaka python program: chmod 644

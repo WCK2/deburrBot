@@ -177,6 +177,31 @@
     background-color: rgb(135, 135, 135);
 }
 
+/*===================================================
+ * page generator1
+===================================================*/
+#page_custom_path #btn_img{
+    background-color: transparent;
+    border: 1px solid rgb(255, 255, 255);
+}
+
+#page_custom_path #btn_start {
+    min-width:175px;
+    max-width:175px;
+    background-color: rgb(32, 194, 10);
+    border: 1px solid rgb(1, 102, 1);
+    color:rgb(0, 0, 0);
+    font-size:30px;
+}
+#page_custom_path #btn_start:pressed {
+    background-color: rgb(51, 243, 25);
+    border: 2px solid rgb(1, 102, 1);
+    font-size:28px;
+}
+#page_custom_path #btn_start:disabled {
+    background-color: rgb(135, 135, 135);
+}
+
 
 
 /* for testing */

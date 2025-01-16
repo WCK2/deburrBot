@@ -17,7 +17,9 @@ if __name__ == '__main__':
     # d435 = D435()
     # rgbd_data = d435.get_data(save=True)
 
-    rgbd_data = rgbd_read_data(folder_path='d435_2024-09-06_08-08-24')
+    # rgbd_data = rgbd_read_data(folder_path='d435_2024-09-06_08-08-24')
+    rgbd_data = rgbd_read_data('d435_2024-09-15_21-03-23')
+    
     plt_imshow(rgbd_data.colors, rgbd_data.vertices[:,:,2])
     plt_imshow(rgbd_data.vertices[:,:,0], rgbd_data.vertices[:,:,2])
 

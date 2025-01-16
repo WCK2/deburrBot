@@ -27,7 +27,8 @@ class TCamera(QThread):
                 rgbd_data, _ = rgbd_depth_filter(rgbd_data, 100, 1500)
                 idata.set_rgbd(rgbd_data)
             elif settings.TESTING:
-                rgbd_data = rgbd_read_data('d435_2024-09-19_09-25-47')
+                # rgbd_data = rgbd_read_data('d435_2024-09-19_09-25-47')
+                rgbd_data = rgbd_read_data('d435_2024-09-15_21-03-23')
                 rgbd_data, _ = rgbd_depth_filter(rgbd_data, 100, 1500)
                 idata.set_rgbd(rgbd_data)
             else:

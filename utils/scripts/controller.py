@@ -15,7 +15,8 @@ def setup():
     # print(robot.get_tool())
     # print(robot.get_tcp_pose())
     robot.set_frame([-809.075, -11.325, -100.975, -0.18, -0.0034, 91.08])
-    robot.set_tool([-133.368, 77.0, 200.0, -169.95, 0.288, -115.89])
+    # robot.set_tool([-133.368, 77.0, 200.0, -169.95, 0.288, -115.89])
+    robot.set_tool([-98.008, 44.501, 199.967, -179.955, 0.288, -115.887])
     robot.waitmove()
 
 def log(s):

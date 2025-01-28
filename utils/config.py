@@ -1,5 +1,7 @@
 import os
 import copy
+import numpy as np
+from PyQt5.QtCore import *
 
 
 SCREEN_WIDTH = 1024 # 800
@@ -13,6 +15,7 @@ class VPath:
         self.gif = os.getcwd() + '/assets/gif/'
         self.images = os.getcwd() + '/assets/images/'
         self.models = os.getcwd() + '/assets/models/'
+        self.temp = os.getcwd() + '/assets/temp/'
 
 vp = VPath()
 
@@ -54,14 +57,16 @@ settings = SETTINGS()
 
 
 
-class IMAGE_DATA:
+class IMAGE_DATA(QObject):
+    custom_signal = pyqtSignal(str)
     def __new__(cls, *args, **kw):
          if not hasattr(cls, '_instance'):
              orig = super(IMAGE_DATA, cls)
              cls._instance = orig.__new__(cls, *args, **kw)
          return cls._instance
     
-    def __init__(self) -> None:
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
         self.rgbd_data = None
         self.sam_img_width = 640
         self.sam_img_height = 360
@@ -84,6 +89,9 @@ class IMAGE_DATA:
         self.path_with_timestamp = copy.deepcopy(rgbd_data.path_with_timestamp)
         self.depth_intrinsics = copy.deepcopy(rgbd_data.depth_intrinsics)
         self.color_intrinsics = copy.deepcopy(rgbd_data.color_intrinsics)
+
+        self.camera_params = (self.color_intrinsics['fx'], self.color_intrinsics['fy'], self.color_intrinsics['ppx'], self.color_intrinsics['ppy'])
+        self.camera_distortion = np.array(self.color_intrinsics['coeffs'])
 
         # if not os.path.exists(vp.data + f'{self.folder_name}'):
         #     os.makedirs(vp.data + f'{self.folder_name}')

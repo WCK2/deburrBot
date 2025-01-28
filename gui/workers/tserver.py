@@ -3,7 +3,9 @@ import threading
 from http.server import BaseHTTPRequestHandler, HTTPServer, SimpleHTTPRequestHandler
 from urllib.parse import urlparse, parse_qs
 from utils.config import settings, idata
-from utils.memory import mem
+from utils.memory import mem, atdata
+from utils.D435_rpi import D435, rgbd_read_data
+from utils.img_processing import rgbd_depth_filter
 
 
 #~ Server handler
@@ -32,6 +34,15 @@ class RpiHttpHandler(SimpleHTTPRequestHandler):
         
         if path == '/hello':
             self.json_response(200, {"state": True})
+        elif path == '/take_pic':
+            try:
+                d435 = D435()
+                rgbd_data = d435.get_data(save=True)
+                # mem.custom_signal.emit('take_pic')
+                # idata.custom_signal.emit('take_pic')
+                self.json_response(200, {"status": "success", "message": "Image captured!"})
+            except Exception as e:
+                self.json_response(500, {"error": f"Internal Server Error: {str(e)}"})
         else:
             self.text_response(404, "Not Found")
     
@@ -51,6 +62,8 @@ class RpiHttpHandler(SimpleHTTPRequestHandler):
 
         if path == "/mem":
             self.handle_set_mem(body_data)
+        elif path == "/ATPrograms":
+            self.handle_ATPrograms(body_data)
         else:
             self.text_response(404, "Not Found")
 
@@ -69,6 +82,34 @@ class RpiHttpHandler(SimpleHTTPRequestHandler):
             return self.json_response(200, {"status": "success"})
         else:
             # Handle invalid 'name' values
+            return self.text_response(400, f"Invalid 'name' value: {name}")
+
+    def handle_ATPrograms(self, body_data):
+        """Handle setting memory values via POST request."""
+        name = body_data.get("name")
+        value = body_data.get("value")
+
+        print(f'name: {name}')
+        print(f'value: {value}')
+
+        if name is None or value is None:
+            return self.text_response(400, "Missing 'name' or 'value' in request body")
+
+        if name == 'coarse_pic':
+            required_keys = {"frame", "tool", "pose", "camera_tool"}
+            if not isinstance(value, dict) or not required_keys.issubset(value.keys()):
+                return self.text_response(400, f"Invalid value format. Expected keys: {', '.join(required_keys)}")
+            
+            d435 = D435()
+            rgbd_data = d435.get_data(save=True)
+            rgbd_data, _ = rgbd_depth_filter(rgbd_data, 100, 1500)
+            
+            atdata.run_coarse_data(rgbd_data, robot_data=value)
+
+            return self.json_response(200, {"status": "success", "detections": atdata.detections})
+        
+        
+        else:
             return self.text_response(400, f"Invalid 'name' value: {name}")
 
     # def log_message(self, format, *args):

@@ -9,6 +9,9 @@ pip install scikit-learn scikit-spatial
 pip install pyqt5
 # Comment out lines 90-94 in .venv\Lib\site-packages\timm\models\_registry.py (f'Overwriting {model_name} in registry with {fn.__module__}.{model_name}. ...)
 pip install opencv-contrib-python # charuco needs opencv-contrib-python
+pip install cmake pupil-apriltags
+pip install rich
+
 
 
 
@@ -82,10 +85,18 @@ pip install werkzeug==2.0.3 MarkupSafe==2.0.1
 sudo apt-get install libx11-xcb1 libx11-xcb-dev libxcb1 libxcb-xfixes0-dev libxcb-shm0-dev
 sudo apt install libxcb-xinerama0 libxcb-xinerama0-dev libxkbcommon-x11-0
 
-
-
-
-
-
+pip install cmake pupil-apriltags
+  # Failed bc of:
+    # AttributeError: module 'numpy' has no attribute 'get_include'
+    # ERROR: Could not build wheels for pupil-apriltags which use PEP 517 and cannot be installed directly
+sudo apt-get update
+pip install --upgrade pip
+  # upgraded from 20.3.4 to 24.3.1
+pip install numpy --upgrade
+  # upgraded from 1.26.4 to 2.02
+pip install cmake pupil-apriltags
+  # Successfully installed pupil-apriltags-1.0.4.post10
+pip install numpy==1.26.4
+pip install rich
 
 

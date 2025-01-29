@@ -122,9 +122,9 @@ class SidePanel(QLabel):
 
     def __inc_force(self, b:bool):
         # mem.status = generate_random_string()
-        n = 1 if b else -1
+        n = 0.5 if b else -0.5
         p = abs(mem.force) + n
-        if (p < 1) or (p > 8): return
+        if (p < 1) or (p > 12.5): return
         mem.force = -p
         self.force_label.setText(f'Force: {abs(p)}')
         post_req_async(path='mem', data={'name': 'desired_force', 'value': mem.force})

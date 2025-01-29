@@ -99,7 +99,61 @@ def get_vertex(vertices, coord, radius:int=5):
     
     return average_vertex
 
+def rotate_pose_around_x(pose, angle_degrees):
+    """
+    Applies a rotation around the pose's own x-axis and rounds all values to 3 decimals.
 
+    Args:
+        pose: List or NumPy array [x, y, z, rx, ry, rz] where rx, ry, rz are in degrees.
+        angle_degrees: The angle (in degrees) to rotate around the x-axis.
+
+    Returns:
+        Updated pose [x, y, z, rx', ry', rz'] as a list with values rounded to 3 decimals.
+    """
+    pose = np.array(pose)
+    position = pose[:3]
+    rotation_degrees = pose[3:]
+    
+    initial_rotation = Rotation.from_euler('xyz', rotation_degrees, degrees=True)
+    initial_matrix = initial_rotation.as_matrix()
+    
+    additional_rotation = Rotation.from_euler('x', angle_degrees, degrees=True)
+    additional_matrix = additional_rotation.as_matrix()
+    
+    new_rotation_matrix = additional_matrix @ initial_matrix
+    
+    new_rotation_degrees = Rotation.from_matrix(new_rotation_matrix).as_euler('xyz', degrees=True)
+    updated_pose = np.round(np.concatenate((position, new_rotation_degrees)), 3)
+
+    return updated_pose.tolist()
+
+def rotate_pose_around_y(pose, angle_degrees):
+    """
+    Applies a rotation around the pose's own y-axis and rounds all values to 3 decimals.
+
+    Args:
+        pose: List or NumPy array [x, y, z, rx, ry, rz] where rx, ry, rz are in degrees.
+        angle_degrees: The angle (in degrees) to rotate around the y-axis.
+
+    Returns:
+        Updated pose [x, y, z, rx', ry', rz'] as a list with values rounded to 3 decimals.
+    """
+    pose = np.array(pose)
+    position = pose[:3]
+    rotation_degrees = pose[3:]
+    
+    initial_rotation = Rotation.from_euler('xyz', rotation_degrees, degrees=True)
+    initial_matrix = initial_rotation.as_matrix()
+    
+    additional_rotation = Rotation.from_euler('y', angle_degrees, degrees=True)
+    additional_matrix = additional_rotation.as_matrix()
+    
+    new_rotation_matrix = initial_matrix @ additional_matrix
+    
+    new_rotation_degrees = Rotation.from_matrix(new_rotation_matrix).as_euler('xyz', degrees=True)
+    updated_pose = np.round(np.concatenate((position, new_rotation_degrees)), 3)
+
+    return updated_pose.tolist()
 
 class TargetTransformer():
     def __init__(self, robot_frame, robot_tool, robot_pose, robot_camera_tool) -> None:
@@ -108,15 +162,16 @@ class TargetTransformer():
         self.T_tool_2_frame = pose_2_tform(robot_pose)
         self.T_camera_2_flange = pose_2_tform(robot_camera_tool)
 
-    def transform(self, target_pose):
+    def transform(self, target_pose, zero_rxryrz=True):
         T_object_2_camera = pose_2_tform(target_pose)
 
         T_object_2_flange = np.dot(self.T_camera_2_flange, T_object_2_camera)
         T_object_2_tool = np.dot(inverse_tform(self.T_tool_2_flange), T_object_2_flange)
         T_object_2_frame_wrt_tool = np.dot(self.T_tool_2_frame, T_object_2_tool)
 
-        p_object_2_frame_wrt_tool = tform_2_pose(T_object_2_frame_wrt_tool)
-        p_object_2_frame_wrt_tool[-3:] = 0
+        p_object_2_frame_wrt_tool = np.round(tform_2_pose(T_object_2_frame_wrt_tool), 3)
+        if zero_rxryrz:
+            p_object_2_frame_wrt_tool[-3:] = 0
 
         return p_object_2_frame_wrt_tool
 

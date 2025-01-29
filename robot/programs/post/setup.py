@@ -61,11 +61,13 @@ class SETTINGS:
         self.pause_button_pin = 1
 
         self.workstation_frame = (-809.075, -11.325, -100.975, -0.18, -0.0034, 91.08)
-        self.grinder_tool = (-139.39, 64.585, 199.93, -169.95, 0.288, -115.89)
+        self.grinder_tool = (-137.104, 64.914, 200.520, -169.065, -0.301, -114.884)
         self.camera_tool = [78.21, 73.4, 50.54, 15.29, -0.46, 150.04]
 
         self.home_joints = [-195.853979, 108.126304, -114.461449, 86.588613, 87.045869, 103.318228]
         self.picture_joints = [-191.885584, 73.340272, -37.301865, 38.968284, 86.117135, 197.443493]
+        self.change_flap_disc_joints = [-186.788809, 56.208847, -77.882628, 111.601616, 89.682821, 107.015095]
+        self.AT_picture_joints = [-190.377028, 74.237594, -75.892313, 76.567521, 86.508623, 198.903390]
 
         self.x_boundary_range = [-565, 565]
         self.y_boundary_range = [-340, 345]
@@ -76,6 +78,7 @@ settings = SETTINGS()
 robot = jakabot(settings.jaka_ip)
 
 
+#~ Requests
 def post_req_async(path, data):
     """Send a POST request asynchronously."""
     url = settings.rpi_url + path
@@ -84,11 +87,46 @@ def post_req_async(path, data):
         try:
             response = requests.post(url, json=data, timeout=5)
             print(f'POST response: {response.status_code}, {response.text}')
+        except requests.Timeout:
+            print("The request timed out.")
         except requests.RequestException as e:
             print(f'Error sending POST request: {e}')
 
     # Create and start a new thread for the POST request
     threading.Thread(target=send_post_request, daemon=True).start()
+
+def post_req_sync(path, data, timeout=5):
+    """Send a POST request and return response."""
+    url = settings.rpi_url + path
+
+    try:
+        response = requests.post(url, json=data, timeout=timeout)
+        # print(f'Status Code: {response.status_code}')
+        # print(f'Content-Type: {response.headers.get("Content-Type")}')
+
+        content_type = response.headers.get('Content-Type', '')
+
+        if 'application/json' in content_type:
+            try:
+                response_data = response.json()
+                # print("Parsed JSON data:", response_data)
+                return response_data
+            except ValueError as e:
+                print("Error parsing JSON:", e)
+                return None
+        elif 'text/html' in content_type:
+            # print("Received HTML response.")
+            return response.text
+        else:
+            print("Received non-JSON, non-HTML response.")
+            return response.text  # You might still want to return the raw text for other content types
+
+    except requests.Timeout:
+        print("The request timed out.")
+        return None
+    except requests.RequestException as e:
+        print(f'Error sending POST request: {e}')
+        return None
 
 
 #~ MEMORY
@@ -104,10 +142,11 @@ class MEMORY:
         self._status = 'Booting'
         self._start = False
         self._program = 0
-        self._speed_multiplier = 1
-        self._desired_force = -5
+        self._speed_multiplier = 0.6
+        self._desired_force = -8.5
 
         self.generator1_target_pairs = []
+        self.AT_detections = []
 
         self.thread_mem_start = None
 

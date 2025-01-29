@@ -1,6 +1,7 @@
 from gui.qt.common import *
 from gui.pages.home import HOME
 from gui.pages.generator1 import GENERATOR1
+from gui.pages.ATPrograms import ATPROGRAMS
 from utils.memory import mem
 
 
@@ -9,6 +10,7 @@ class DEBURRBOT(NStackedWidget):
         super().__init__(*args, **kwargs)
         self.page_home:HOME = self.addWidget(HOME())
         self.page_generator1:GENERATOR1 = self.addWidget(GENERATOR1())
+        self.page_tagprograms:ATPROGRAMS = self.addWidget(ATPROGRAMS())
 
         gsig.previous_page.connect(self.__previous_page)
         gsig.next_page.connect(self.__next_page)

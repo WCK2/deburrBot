@@ -22,7 +22,7 @@ class TCamera(QThread):
             d435 = D435()
             # d435 = D435(load_json='')
 
-            if d435.device is not None:
+            if d435.get_device() is not None:
                 rgbd_data = d435.get_data(save=True)
                 rgbd_data, _ = rgbd_depth_filter(rgbd_data, 100, 1500)
                 idata.set_rgbd(rgbd_data)
@@ -35,9 +35,7 @@ class TCamera(QThread):
                 return
         except Exception as e:
             print(f'!!Error!! During D435 initialization or data capture: \n{e}')
-        finally:
-            if d435 is not None:
-                d435.close()
+            return
         
         #? get robot data
         data = get_req(path='robot', data={'name': 'transformation_data'})
@@ -47,8 +45,8 @@ class TCamera(QThread):
                 return
             data = {
                 'frame': [-809.075, -11.325, -100.975, -0.180246, -0.0034, 91.08],
-                'tool': [-139.39, 64.585, 199.93, -169.95, 0.288, -115.89],
-                'pose': [190.32, -151.19, 832.05, 11.618, -15.506, -94.229],
+                'tool': [-137.104, 64.914, 200.520, -169.065, -0.301, -114.884],
+                'pose': [188.503, -149.976, 831.093, 12.775, -14.886, -95.250],
                 'camera_tool': [78.21, 73.4, 50.54, 15.29, -0.46, 150.04],
                 'x_boundary_range': [-565, 565],
                 'y_boundary_range': [-340, 345],

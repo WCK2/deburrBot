@@ -12,7 +12,7 @@ import time
 def Grinder(b):
     if b:
         CheckRobotFlags()
-        # robot.set_DO(settings.angle_grinder_pin, True)
+        robot.set_DO(settings.angle_grinder_pin, True)
         time.sleep(0.5)
     else:
         robot.waitmove()

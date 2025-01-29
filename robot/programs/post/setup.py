@@ -142,8 +142,8 @@ class MEMORY:
         self._status = 'Booting'
         self._start = False
         self._program = 0
-        self._speed_multiplier = 1
-        self._desired_force = -5
+        self._speed_multiplier = 0.6
+        self._desired_force = -8.5
 
         self.generator1_target_pairs = []
         self.AT_detections = []

@@ -26,9 +26,10 @@ class MEM(QObject):
         self.stop = False
 
         self.page = 0
-        self.speed_option_list = [25, 50, 75, 100, 125, 150, 200, 300]
-        self.speed_index = 2
-        self.force = -7
+        self.speed_option_list = [20, 30, 40, 50, 60, 70, 80, 90, 100, 110, 120, 150, 200, 300]
+        self.speed_index = 4
+        
+        self.force = -8.5
         self._status = 'Booting'
 
         #? data / image processing output

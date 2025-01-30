@@ -51,7 +51,7 @@ def CheckRobotFlags(wait=True):
 #~ Force sensor
 def ZeroForceSensor():
     robot.waitmove()
-    time.sleep(0.75)
+    time.sleep(1)
     robot.set_compliant_type(1, 0)
     time.sleep(0.1)
     robot.set_compliant_type(0, 0)
@@ -111,7 +111,7 @@ def SAM_force_target_run(targets: list, zcontact: bool=True, easeon: int=20, eas
     #? ease on
     t_easeon = targets[0].copy()
     t_easeon[2] = easeon
-    robot.movel(t_easeon, speed=25)
+    robot.movel(t_easeon, speed=25, accel=125)
     robot.waitmove()
 
     robot.servo_move_use_joint_LPF(0.4)
@@ -272,7 +272,7 @@ def SAM_force_target_run(targets: list, zcontact: bool=True, easeon: int=20, eas
     #? ease off
     t_easeoff = robot.get_tcp_pose()
     t_easeoff[2] += easeoff
-    robot.movel(t_easeoff, speed=25)
+    robot.movel(t_easeoff, speed=50, accel=125)
     robot.waitmove()
 
 
@@ -293,7 +293,7 @@ def SAM_force_target_pair_run(t_start: list, t_end: list, zcontact: bool=True, e
     t_easeon = t_start.copy()
     # t_easeon[2] += easeon #! May want to just set this to (0 + easeon) as long as the given part isnt super tall (3d)
     t_easeon[2] = easeon #! ... like so lol
-    robot.movel(t_easeon, speed=25)
+    robot.movel(t_easeon, speed=25, accel=125)
     robot.waitmove()
 
     robot.servo_move_use_joint_LPF(0.4)
@@ -448,7 +448,7 @@ def SAM_force_target_pair_run(t_start: list, t_end: list, zcontact: bool=True, e
     # t_easeoff = t_end.copy()
     t_easeoff = robot.get_tcp_pose()
     t_easeoff[2] += easeoff
-    robot.movel(t_easeoff, speed=25)
+    robot.movel(t_easeoff, speed=50, accel=125)
     robot.waitmove()
 
 
@@ -468,7 +468,7 @@ def AT_force_target_pair_run(t_start: list, t_end: list, zcontact: bool=True, ea
     #? ease on
     t_easeon = t_start.copy()
     t_easeon[2] += easeon
-    robot.movel(t_easeon, speed=25)
+    robot.movel(t_easeon, speed=25, accel=125)
     robot.waitmove()
 
     robot.servo_move_use_joint_LPF(0.4)
@@ -623,7 +623,7 @@ def AT_force_target_pair_run(t_start: list, t_end: list, zcontact: bool=True, ea
     # t_easeoff = t_end.copy()
     t_easeoff = robot.get_tcp_pose()
     t_easeoff[2] += easeoff
-    robot.movel(t_easeoff, speed=50)
+    robot.movel(t_easeoff, speed=50, accel=125)
     robot.waitmove()
 
 

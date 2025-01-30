@@ -66,7 +66,7 @@ class SETTINGS:
 
         self.home_joints = [-195.853979, 108.126304, -114.461449, 86.588613, 87.045869, 103.318228]
         self.picture_joints = [-191.885584, 73.340272, -37.301865, 38.968284, 86.117135, 197.443493]
-        self.change_flap_disc_joints = [-186.788809, 56.208847, -77.882628, 111.601616, 89.682821, 107.015095]
+        self.change_flap_disc_joints = [-188.672630, 51.422710, -81.831690, 209.464020, 98.370150, 114.741520]
         self.AT_picture_joints = [-190.377028, 74.237594, -75.892313, 76.567521, 86.508623, 198.903390]
 
         self.x_boundary_range = [-565, 565]
@@ -142,8 +142,8 @@ class MEMORY:
         self._status = 'Booting'
         self._start = False
         self._program = 0
-        self._speed_multiplier = 0.6
-        self._desired_force = -8.5
+        self._speed_multiplier = 0.2
+        self._desired_force = -7
 
         self.generator1_target_pairs = []
         self.AT_detections = []
@@ -187,7 +187,7 @@ class MEMORY:
         with self.lock:
             return self._speed_multiplier
     def _set_speed_multiplier(self, val):
-        if 0.1 <= val <= 4:
+        if 0.05 <= val <= 4:
             with self.lock:
                 self._speed_multiplier = val
         else:

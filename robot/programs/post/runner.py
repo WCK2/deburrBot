@@ -29,7 +29,7 @@ def generator1_deburring_program():
 
 
 def apriltag_coarse_pic():
-    robot.movej(settings.AT_picture_joints, speed=25) #* temp
+    robot.movej(settings.AT_picture_joints, speed=40) #* temp
     robot.waitmove()
     time.sleep(1)
 

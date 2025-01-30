@@ -7,8 +7,8 @@ MAKE = True
 
 #~ Speeds (linear_velocity, angular_velocity, linear_acceleration, angular_acceleration)
 slow_speeds = 30, 15, 200, 5
-fast_speeds = 75, 25, 125, 15
-# fast_speeds = 250, 60, 125, 40
+# fast_speeds = 75, 25, 125, 15
+fast_speeds = 100, 40, 125, 25
 
 
 FAST = 0

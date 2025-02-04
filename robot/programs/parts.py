@@ -53,17 +53,22 @@ class GENERIC_ATPROGRAM():
 #^ MS3 10in Door - Grind weld blemishes
 #^=========================
 class Grind_MS3_CALE10in(GENERIC_ATPROGRAM):
-    params = 'frame, right, left'
+    params = 'frame, right, left, target_selections=[]'
     def right(self):
         robot.AddCode(f'# -- {inspect.currentframe().f_code.co_name} --')
         tar_frame = self.frame.findChild('right')
+        tars = GetTargetMats(tar_frame)
+
+        _start = 0
+        AddMultiTarSel(_start, len(tars)-1)
+        
         SetFrame(tar_frame, False)
         robot.AddCode('robot.set_frame(right[:])')
 
-        tars = GetTargetMats(tar_frame)
-
         for c, t in enumerate(tars):
-            robot.AddCode(f'#   target {c}')
+            robot.AddCode(f'# target {c}')
+            AddSingleTarSel(c + _start)
+
             _rx = -1
             t1 = RelFrame(t.Offset(rx=_rx), x=0, y=15)
             t2 = RelFrame(t.Offset(rx=_rx), x=0, y=-15)
@@ -77,16 +82,25 @@ class Grind_MS3_CALE10in(GENERIC_ATPROGRAM):
             if c == len(tars) - 1:
                 robot.nos_MoveL(FAST, RelFrame(t2, z=50))
 
+            AddTab(False)
+        
+        AddTab(False)
+
     def left(self):
         robot.AddCode(f'# -- {inspect.currentframe().f_code.co_name} --')
         tar_frame = self.frame.findChild('left')
+        tars = GetTargetMats(tar_frame)
+
+        _start = 4
+        AddMultiTarSel(_start, _start + len(tars)-1)
+
         SetFrame(tar_frame, False)
         robot.AddCode('robot.set_frame(left[:])')
 
-        tars = GetTargetMats(tar_frame)
-
         for c, t in enumerate(tars):
-            robot.AddCode(f'#   target {c}')
+            robot.AddCode(f'# target {c}')
+            AddSingleTarSel(c + _start)
+
             _rx = -1
             t1 = RelFrame(t.Offset(rx=_rx), x=10, y=15)
             t2 = RelFrame(t.Offset(rx=_rx), x=10, y=-15)
@@ -100,11 +114,15 @@ class Grind_MS3_CALE10in(GENERIC_ATPROGRAM):
             if c == len(tars) - 1:
                 robot.nos_MoveL(FAST, RelFrame(t2, z=50))
 
+            AddTab(False)
+        
+        AddTab(False)
 
 
 
 
     def run(self):
+        robot.AddCode(f'target_selections = target_selections or {CreateIntList(0, 7)}')
         robot.setSlowSpeeds(*slow_speeds)
         robot.setFastSpeeds(*fast_speeds)
 
@@ -113,14 +131,14 @@ class Grind_MS3_CALE10in(GENERIC_ATPROGRAM):
         robot.AddCode('robot.set_frame(frame[:])')
         
         Grinder(1)
-
         robot.nos_MoveJ(FASTAF, jtars.home_joints.Joints())
+
         self.right()
         robot.nos_MoveJ(FASTAF, jtars.home_joints.Joints())
         self.left()
-        robot.nos_MoveJ(FASTAF, jtars.home_joints.Joints())
 
         Grinder(0)
+        robot.nos_MoveJ(FASTAF, jtars.home_joints.Joints())
 
         # robot.nos_MoveJ(FASTAF, jtars.picture_joints.Joints())
 

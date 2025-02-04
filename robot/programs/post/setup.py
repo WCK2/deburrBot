@@ -146,7 +146,6 @@ class MEMORY:
         self._desired_force = -7
 
         self.generator1_target_pairs = []
-        self.AT_detections = []
 
         self.thread_mem_start = None
 

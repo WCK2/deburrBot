@@ -52,7 +52,7 @@ mem = MEM()
 class ATDATA(QObject):
     new_status = pyqtSignal()
     at_signals = pyqtSignal(str)
-    coarse_data = pyqtSignal()
+    target_runner_detections = pyqtSignal()
     def __new__(cls, *args, **kw):
          if not hasattr(cls, '_instance'):
              orig = super(ATDATA, cls)
@@ -67,8 +67,11 @@ class ATDATA(QObject):
         self.robot_pose = [0,0,0,0,0,0]
         self.robot_camera_tool = [0,0,0,0,0,0]
 
-    def run_coarse_data(self, rgbd_data, robot_data: dict):
-        print(f'run_coarse_data on rgbd_data {rgbd_data.path_with_timestamp.split("/")[-2]}')
+        self.program_selection = 0
+        self.target_selections = []
+
+    def get_target_runner_detections(self, rgbd_data, robot_data: dict):
+        print(f'run_target_runner_detections on rgbd_data {rgbd_data.path_with_timestamp.split("/")[-2]}')
         for key, value in robot_data.items():
             print(f'{key.capitalize():<15}: {value}')
         
@@ -89,7 +92,7 @@ class ATDATA(QObject):
         atdata.robot_camera_tool = robot_data["camera_tool"]
 
         #? detection(s)
-        self.detections, self.draw_img = detect_and_estimate_tags(
+        self.all_detections, self.draw_img = detect_and_estimate_tags(
             self.colors_original, 
             self.camera_params, 
             self.camera_distortion, 
@@ -104,7 +107,17 @@ class ATDATA(QObject):
             robot_camera_tool = self.robot_camera_tool
         )
 
-        for c, detection in enumerate(self.detections):
+        selected_detections = []
+        for c, detection in enumerate(self.all_detections):
+            print(f'\ndetection[{c}]\n' + '=' * 30)
+
+            if self.program_selection != detection.get('program', -1):
+                print(f'skipping bc program number mismatch: {self.program_selection} != {detection.get("program", -1)}')
+                for key, value in detection.items():
+                    print(f'{key.capitalize():<15}: {value}')
+                print('=' * 30)
+                continue
+
             rotated_pose = rotate_pose_around_x(detection['pose'], 180)
             pose_wrt_frame = transformer.transform(rotated_pose, zero_rxryrz=False)
 
@@ -147,15 +160,17 @@ class ATDATA(QObject):
 
             # TODO: Check that the part is on the jig
 
-            #? log
-            print(f'\ndetection[{c}]\n' + '=' * 30)
+
+            #? append and log
+            selected_detections.append(detection)
+
             for key, value in detection.items():
                 print(f'{key.capitalize():<15}: {value}')
             print('=' * 30)
 
+        self.target_runner_detections.emit()
+        return selected_detections
 
-
-        self.coarse_data.emit()
 
 
 atdata = ATDATA()
@@ -182,7 +197,9 @@ if __name__ == "__main__":
         'camera_tool': [78.21, 73.4, 50.54, 15.29, -0.46, 150.04],
     }
 
-    atdata.run_coarse_data(rgbd_data, robot_data)
+    atdata.program_selection = 12
+    atdata.target_selections = [1,2,4,5,6]
+    atdata.get_target_runner_detections(rgbd_data, robot_data)
     cv2_show(atdata.draw_img)
 
 

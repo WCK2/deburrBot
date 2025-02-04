@@ -91,6 +91,7 @@ class D435:
         self.load_json = kwargs.get('load_json', self.vp_base + 'assets/configs/d435_default1.json')
 
     def start_stream(self):
+        print(f'start_stream (1)')
         if self.device is None:
             self.device = self.get_device()
         if self.device is None:
@@ -102,19 +103,24 @@ class D435:
             self.load_json_params(self.load_json)
         else:
             print(f'!!Warning!! No file exists at: <{self.load_json}>')
-    
+
+        print(f'start_stream (2)')
         self.p = rs.pipeline()
         config = rs.config()
         config.enable_stream(rs.stream.depth, 848, 480, rs.format.z16, 30)
         config.enable_stream(rs.stream.color, 1280, 720, rs.format.rgb8, 30)
 
+        print(f'start_stream (3)')
         self.profile = self.p.start(config)
         self.init_intrinsics()
 
+        print(f'start_stream (4)')
         for _ in range(5):
             self.p.wait_for_frames()
+        print(f'start_stream (5)')
 
     def stop_stream(self):
+        print(f'stop_stream')
         if self.p is not None:
             try:
                 self.p.stop()

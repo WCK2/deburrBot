@@ -75,6 +75,9 @@ class SidePanel(QLabel):
         status_grid.addWidget(self.status_name, 0, 0, alignment=Qt.AlignCenter)
         status_grid.addWidget(self.status_value, 1, 0, alignment=Qt.AlignCenter)
 
+        self.btn_angle_grinder = QPushButton(objectName='btn', text='Turn On/Off\nAngle Grinder')
+        self.btn_angle_grinder.clicked.connect(lambda: post_req_async(path='robot_DO', data={'name': 'angle_grinder', 'value': 'toggle'}))
+
         self.btn_stop = QPushButton(self, objectName='btn_stop', text='STOP', minimumHeight=50, maximumHeight=50)
         self.btn_stop.setCheckable(True)
         self.btn_stop.clicked.connect(self.__onbtn_stop)
@@ -91,6 +94,8 @@ class SidePanel(QLabel):
         panel.addLayout(force_grid)
         panel.addSpacing(10)
         panel.addLayout(status_grid)
+        panel.addSpacing(10)
+        panel.addWidget(self.btn_angle_grinder, alignment=Qt.AlignCenter)
         panel.addStretch()
         panel.addSpacing(10)
         panel.addWidget(self.btn_stop, alignment=Qt.AlignCenter)

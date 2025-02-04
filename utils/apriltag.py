@@ -11,7 +11,7 @@ from rich import print
 #~ global
 TAG_ID_DATA = {
     0: {'tag_size_mm': 70, 'program': None, 'requires_fine': False},
-    1: {'tag_size_mm': 120, 'program': 12, 'requires_fine': True, 'boundaries': {'x': [-1050, -900], 'y': [-210, 165], 'z': [-75, -40], 'rx': [-7.5, 7.5], 'ry': [-7.5, 7.5], 'rz': [84, 99]}},
+    1: {'tag_size_mm': 120, 'program': 12, 'requires_fine': False, 'boundaries': {'x': [-1050, -900], 'y': [-210, 165], 'z': [-75, -40], 'rx': [-7.5, 7.5], 'ry': [-7.5, 7.5], 'rz': [84, 99]}},
 }
 
 #~ helper functions
@@ -106,6 +106,18 @@ def detect_and_estimate_tags(img, camera_params, camera_distortion=np.zeros(5), 
                     draw_img = cv2.cvtColor(draw_img, cv2.COLOR_RGB2BGR)
                     cv2.drawFrameAxes(draw_img, camera_matrix, camera_distortion, rot_vec, trans_vec, tag_size_mm)
                     draw_img = cv2.cvtColor(draw_img, cv2.COLOR_BGR2RGB)
+
+                    #? draw text
+                    _text = str(tag_data['program'])
+                    _font = cv2.FONT_HERSHEY_SIMPLEX
+                    _font_scale = 0.9
+                    _color = (255, 192, 203)
+                    _thickness = 2
+                    
+                    _x = int(pose_tag.center[0] - tag_size_mm/2)
+                    _y = int(pose_tag.center[1] - tag_size_mm/2)
+
+                    cv2.putText(draw_img, _text, (_x, _y), _font, _font_scale, _color, _thickness, cv2.LINE_AA)
 
     else:
         print("No AprilTags detected.")

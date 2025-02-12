@@ -53,7 +53,7 @@ def ZeroForceSensor():
     robot.waitmove()
     time.sleep(1)
     robot.set_compliant_type(1, 0)
-    time.sleep(0.1)
+    time.sleep(0.5)
     robot.set_compliant_type(0, 0)
     time.sleep(0.1)
 
@@ -483,7 +483,8 @@ def AT_force_target_pair_run(t_start: list, t_end: list, zcontact: bool=True, ea
         no_contact_tolerance = 5
         pstart = robot.get_tcp_pose()
         while True:
-            d = abs(robot.get_tcp_pose()[2] - pstart[2])
+            pose = robot.get_tcp_pose()
+            d = abs(pose[2] - pstart[2])
             if d > (easeon + no_contact_tolerance):
                 print(f'break zcontact loop, without contact. (d={d})')
                 break
@@ -492,8 +493,8 @@ def AT_force_target_pair_run(t_start: list, t_end: list, zcontact: bool=True, ea
             error = (mem.desired_force * 1.5) - zero_forces[2]
             if error > 0:
                 break_counter += 1
-                print(f'break_contact loop incremented to: {break_counter}')
-                if break_counter >= 4:
+                print(f'break_contact loop incremented to: {break_counter}. desired_force (not modified): {mem.desired_force}. error: {error}. zero_forces[2]: {zero_forces[2]}')
+                if break_counter >= 5:
                     print(f'break zcontact loop, with contact. (d={d})')
                     break
 
@@ -521,6 +522,15 @@ def AT_force_target_pair_run(t_start: list, t_end: list, zcontact: bool=True, ea
 
             robot.servo_p(cartesian_pose = [0, 0, zstep, 0, 0, 0], move_mode = 1)
 
+            #? log data
+            data_log['pose'].append([round(val, 3) for val in pose])
+            data_log['zero_forces'].append(round(zero_forces, 3))
+            data_log['error'].append(round(error, 3))
+            data_log['integral'].append(round(pid.integral, 3))
+            data_log['derivative'].append(round(derivative, 3))
+            data_log['zstep'].append(round(zstep, 3))
+            data_log['time'].append(time.time())
+        
             if counter % 20 == 0:
                 CheckRobotFlags(wait=False)
             counter += 1

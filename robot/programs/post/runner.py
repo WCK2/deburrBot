@@ -77,7 +77,16 @@ def apriltag_target_runner():
             
             print(f'running prog {program_selection} via apriltag_target_runner')
             Grind_MS3_CALE10in(tag_ref, right_ref, left_ref, target_selections)
+        
+        elif program_selection == 13:
+            tag_ref = detection.get('pose_tcp_2_world', None)
 
+            if not isinstance(tag_ref, list):
+                print(f'Invalid detection data. Skipping {c}...')
+                continue
+
+            print(f'running prog {program_selection} via apriltag_target_runner')
+            # Grind_MS3_10in_Rear(tag_ref, target_selections)
 
 
 

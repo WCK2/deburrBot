@@ -29,7 +29,7 @@ class ATTargetSelector(QLabel):
     def set_image(self, img_path):
         """Load a new image, resize it, and update buttons based on filename."""
         self.current_filename = os.path.basename(img_path)
-        print(f'img_path: {img_path}')
+        # print(f'img_path: {img_path}')
 
         if not os.path.exists(img_path):
             print(f'Image {self.current_filename} not found.')
@@ -40,7 +40,6 @@ class ATTargetSelector(QLabel):
         #? load image and resize
         img = cv2.imread(img_path)
         self.original_img_size = img.shape
-        print(self.original_img_size)
         img = cv2.resize(img, (self.label_img.width(), self.label_img.height()), interpolation=cv2.INTER_AREA)
         img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
         h, w, ch = img.shape
@@ -50,13 +49,13 @@ class ATTargetSelector(QLabel):
         self.update_buttons()
     
     def update_buttons(self):
-        print(f'update_buttons')
         for btn in self.target_buttons:
             btn.setParent(None)
         self.target_buttons.clear()
 
         button_positions = {
             'ATTargetSelector12.jpg': [(61, 493), (61, 380), (61, 223), (61, 98), (367, 565), (367, 435), (367, 195), (367, 67)],
+            'ATTargetSelector13.jpg': [(67, 560), (67, 450), (67, 194), (67, 83), (366, 496), (366, 387), (366, 232), (366, 100)], # (50, 593), (50, 51), (383, 593), (383, 51)]
         }
 
         if self.current_filename in button_positions:
@@ -194,7 +193,6 @@ class ATPROGRAMS(NFrame):
         self.target_selector.set_image(vp.images + f'ATTargetSelector{self.program_selection}.jpg')
 
     def __on_start(self):
-        print(f'__on_start()')
         atdata.program_selection = self.program_selection
         atdata.target_selections = self.target_selector.get_selected_targets()
 

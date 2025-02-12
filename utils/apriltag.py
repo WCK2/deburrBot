@@ -12,6 +12,9 @@ from rich import print
 TAG_ID_DATA = {
     0: {'tag_size_mm': 70, 'program': None, 'requires_fine': False},
     1: {'tag_size_mm': 120, 'program': 12, 'requires_fine': False, 'boundaries': {'x': [-1050, -900], 'y': [-210, 165], 'z': [-75, -40], 'rx': [-7.5, 7.5], 'ry': [-7.5, 7.5], 'rz': [84, 99]}},
+    2: {'tag_size_mm': 120, 'program': 13, 'requires_fine': False, 'boundaries': {'x': [-1050, -900], 'y': [-210, 165], 'z': [-75, -40], 'rx': [-2.5, 2.5], 'ry': [-2.5, 2.5], 'rz': [88, 94]}},
+    3: {'tag_size_mm': 120, 'program': 13, 'requires_fine': False, 'boundaries': {'x': [-1050, -900], 'y': [-295, 165], 'z': [-100, -40], 'rx': [-2.5, 2.5], 'ry': [-2.5, 2.5], 'rz': [88, 94]}},
+    4: {'tag_size_mm': 120, 'program': None, 'requires_fine': False},
 }
 
 #~ helper functions

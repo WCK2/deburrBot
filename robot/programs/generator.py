@@ -50,6 +50,7 @@ if __name__ == "__main__":
             main = DEBURRBOTMAIN()
 
             main.add(12, Grind_MS3_CALE10in, frame='Grind_MS3_CALE10in')
+            main.add(13, Grind_MS3_10in_Rear, frame='Grind_MS3_10in_Rear')
 
             main.generate()
 
@@ -57,7 +58,8 @@ if __name__ == "__main__":
         else:
             rdk.setSimulationSpeed(1.0)
 
-            Grind_MS3_CALE10in(frame='Grind_MS3_CALE10in')
+            # Grind_MS3_CALE10in(frame='Grind_MS3_CALE10in')
+            Grind_MS3_10in_Rear(frame='Grind_MS3_10in_Rear')
 
 
 

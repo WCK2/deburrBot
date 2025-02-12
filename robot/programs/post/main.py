@@ -28,9 +28,9 @@ def main():
 
 #~ Setup
 def setup():
-    # start server
     server.run_server()
     print('> server running')
+    mem.status = 'Initializing'
 
     robot.init()
     robot.servo_move_enable(False)

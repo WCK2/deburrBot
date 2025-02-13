@@ -6,6 +6,11 @@ import pickle
 import gzip
 import time
 # import keyboard
+from utils.timing import RobotRunTimer
+
+
+#~ Initializations
+stopwatch = RobotRunTimer()
 
 
 #~ Tool I/O
@@ -640,6 +645,7 @@ def AT_force_target_pair_run(t_start: list, t_end: list, zcontact: bool=True, ea
 
 #~ Program prep/cleanup
 def StartRun(p):
+    stopwatch.start()
     mem.status = f'running:{p}'
     robot.servo_move_enable(False)
     if robot.is_in_drag_mode()[1]:
@@ -651,6 +657,7 @@ def StartRun(p):
 
 def EndRun(p):
     robot.waitmove()
+    stopwatch.stop()
     mem.status = f'idle:{p}'
 
     robot.set_frame(list(settings.workstation_frame))

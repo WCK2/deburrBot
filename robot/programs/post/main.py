@@ -17,6 +17,7 @@ def main():
 
         # if robot.status(22) != 1: print('no comms :o')
         CheckRobotFlags(wait=True)
+        CheckForceSensor()
         print(f'> Program: {p}')
 
         StartRun(p)

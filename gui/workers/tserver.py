@@ -106,11 +106,14 @@ class RpiHttpHandler(SimpleHTTPRequestHandler):
             rgbd_data, _ = rgbd_depth_filter(rgbd_data, 100, 1500)
             
             selected_detections = atdata.get_target_runner_detections(rgbd_data, robot_data=value)
+            print(f'atdata.program_selection: {atdata.program_selection}')
+            print(f'atdata.target_selections: {atdata.target_selections}')
 
             return self.json_response(200, {"status": "success", 
                                             "selected_detections": selected_detections,
                                             "program_selection": atdata.program_selection,
-                                            "target_selections": atdata.target_selections
+                                            "target_selections": atdata.target_selections,
+                                            "rgbd_data filename": rgbd_data.path_with_timestamp.split("/")[-2]
                                             })
         
         else:

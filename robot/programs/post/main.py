@@ -17,6 +17,7 @@ def main():
 
         # if robot.status(22) != 1: print('no comms :o')
         CheckRobotFlags(wait=True)
+        CheckForceSensor()
         print(f'> Program: {p}')
 
         StartRun(p)
@@ -28,9 +29,9 @@ def main():
 
 #~ Setup
 def setup():
-    # start server
     server.run_server()
     print('> server running')
+    mem.status = 'Initializing'
 
     robot.init()
     robot.servo_move_enable(False)

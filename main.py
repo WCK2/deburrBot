@@ -8,6 +8,7 @@ from utils.memory import mem
 class DEBURRBOT(NStackedWidget):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        # TODO: Add Instructions page on page 0 (Maybe also remove GENERATOR1 page)
         self.page_home:HOME = self.addWidget(HOME())
         self.page_generator1:GENERATOR1 = self.addWidget(GENERATOR1())
         self.page_tagprograms:ATPROGRAMS = self.addWidget(ATPROGRAMS())

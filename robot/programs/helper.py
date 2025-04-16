@@ -60,6 +60,7 @@ def SetFrame(refframe, generate=True):
     if generate:
         robot.AddCode(f'robot.set_frame({rounded_pose})')
 
+#~ Tool I/O
 def Grinder(b):
     if b:
         robot.AddCode('Grinder(1)')
@@ -68,21 +69,24 @@ def Grinder(b):
         robot.AddCode('Grinder(0)')
         # if not MAKE: rdk.Command('Trace', 'Off')
 
-
-#~ Tool I/O
-def Laser(b, t_delay=None):
-    if b:
-        if t_delay is None: robot.AddCode('Laser(1)')
-        else: robot.AddCode(f'Laser(1, {t_delay})')
-        if not MAKE: rdk.Command('Trace', 'On')
-    else:
-        robot.AddCode('Laser(0)')
-        if not MAKE: rdk.Command('Trace', 'Off')
-
+#~ Misc
 def AddSleep(t):
     if MAKE: robot.AddCode("time.sleep(%s)" % t)
     else: time.sleep(t)
 
+def CreateIntList(start, end):
+    return list(range(start, end + 1))
+
+def AddSingleTarSel(i: int):
+    robot.AddCode(f'if {i} in target_selections:')
+    robot.AddTab(True)
+
+def AddMultiTarSel(start: int, end: int):
+    robot.AddCode(f'if any(num in target_selections for num in {CreateIntList(start, end)}):')
+    robot.AddTab(True)
+
+def AddTab(b: bool):
+    robot.AddTab(b)
 
 #~ Target Runs
 def AT_force_target_pair_run(t_start, t_end, zcontact=True, easeon=10, easeoff=30):

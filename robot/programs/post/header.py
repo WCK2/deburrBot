@@ -6,6 +6,11 @@ import pickle
 import gzip
 import time
 # import keyboard
+from utils.timing import RobotRunTimer
+
+
+#~ Initializations
+stopwatch = RobotRunTimer()
 
 
 #~ Tool I/O
@@ -51,9 +56,9 @@ def CheckRobotFlags(wait=True):
 #~ Force sensor
 def ZeroForceSensor():
     robot.waitmove()
-    time.sleep(0.75)
+    time.sleep(1)
     robot.set_compliant_type(1, 0)
-    time.sleep(0.1)
+    time.sleep(0.5)
     robot.set_compliant_type(0, 0)
     time.sleep(0.1)
 
@@ -111,7 +116,7 @@ def SAM_force_target_run(targets: list, zcontact: bool=True, easeon: int=20, eas
     #? ease on
     t_easeon = targets[0].copy()
     t_easeon[2] = easeon
-    robot.movel(t_easeon, speed=25)
+    robot.movel(t_easeon, speed=25, accel=125)
     robot.waitmove()
 
     robot.servo_move_use_joint_LPF(0.4)
@@ -272,7 +277,7 @@ def SAM_force_target_run(targets: list, zcontact: bool=True, easeon: int=20, eas
     #? ease off
     t_easeoff = robot.get_tcp_pose()
     t_easeoff[2] += easeoff
-    robot.movel(t_easeoff, speed=25)
+    robot.movel(t_easeoff, speed=50, accel=125)
     robot.waitmove()
 
 
@@ -293,7 +298,7 @@ def SAM_force_target_pair_run(t_start: list, t_end: list, zcontact: bool=True, e
     t_easeon = t_start.copy()
     # t_easeon[2] += easeon #! May want to just set this to (0 + easeon) as long as the given part isnt super tall (3d)
     t_easeon[2] = easeon #! ... like so lol
-    robot.movel(t_easeon, speed=25)
+    robot.movel(t_easeon, speed=25, accel=125)
     robot.waitmove()
 
     robot.servo_move_use_joint_LPF(0.4)
@@ -448,7 +453,7 @@ def SAM_force_target_pair_run(t_start: list, t_end: list, zcontact: bool=True, e
     # t_easeoff = t_end.copy()
     t_easeoff = robot.get_tcp_pose()
     t_easeoff[2] += easeoff
-    robot.movel(t_easeoff, speed=25)
+    robot.movel(t_easeoff, speed=50, accel=125)
     robot.waitmove()
 
 
@@ -468,7 +473,7 @@ def AT_force_target_pair_run(t_start: list, t_end: list, zcontact: bool=True, ea
     #? ease on
     t_easeon = t_start.copy()
     t_easeon[2] += easeon
-    robot.movel(t_easeon, speed=25)
+    robot.movel(t_easeon, speed=25, accel=125)
     robot.waitmove()
 
     robot.servo_move_use_joint_LPF(0.4)
@@ -483,7 +488,8 @@ def AT_force_target_pair_run(t_start: list, t_end: list, zcontact: bool=True, ea
         no_contact_tolerance = 5
         pstart = robot.get_tcp_pose()
         while True:
-            d = abs(robot.get_tcp_pose()[2] - pstart[2])
+            pose = robot.get_tcp_pose()
+            d = abs(pose[2] - pstart[2])
             if d > (easeon + no_contact_tolerance):
                 print(f'break zcontact loop, without contact. (d={d})')
                 break
@@ -492,8 +498,8 @@ def AT_force_target_pair_run(t_start: list, t_end: list, zcontact: bool=True, ea
             error = (mem.desired_force * 1.5) - zero_forces[2]
             if error > 0:
                 break_counter += 1
-                print(f'break_contact loop incremented to: {break_counter}')
-                if break_counter >= 4:
+                print(f'break_contact loop incremented to: {break_counter}. desired_force (not modified): {mem.desired_force}. error: {error}. zero_forces[2]: {zero_forces[2]}')
+                if break_counter >= 5:
                     print(f'break zcontact loop, with contact. (d={d})')
                     break
 
@@ -521,6 +527,15 @@ def AT_force_target_pair_run(t_start: list, t_end: list, zcontact: bool=True, ea
 
             robot.servo_p(cartesian_pose = [0, 0, zstep, 0, 0, 0], move_mode = 1)
 
+            #? log data
+            data_log['pose'].append([round(val, 3) for val in pose])
+            data_log['zero_forces'].append(round(zero_forces, 3))
+            data_log['error'].append(round(error, 3))
+            data_log['integral'].append(round(pid.integral, 3))
+            data_log['derivative'].append(round(derivative, 3))
+            data_log['zstep'].append(round(zstep, 3))
+            data_log['time'].append(time.time())
+        
             if counter % 20 == 0:
                 CheckRobotFlags(wait=False)
             counter += 1
@@ -623,13 +638,14 @@ def AT_force_target_pair_run(t_start: list, t_end: list, zcontact: bool=True, ea
     # t_easeoff = t_end.copy()
     t_easeoff = robot.get_tcp_pose()
     t_easeoff[2] += easeoff
-    robot.movel(t_easeoff, speed=50)
+    robot.movel(t_easeoff, speed=50, accel=125)
     robot.waitmove()
 
 
 
 #~ Program prep/cleanup
 def StartRun(p):
+    stopwatch.start()
     mem.status = f'running:{p}'
     robot.servo_move_enable(False)
     if robot.is_in_drag_mode()[1]:
@@ -641,6 +657,7 @@ def StartRun(p):
 
 def EndRun(p):
     robot.waitmove()
+    stopwatch.stop()
     mem.status = f'idle:{p}'
 
     robot.set_frame(list(settings.workstation_frame))

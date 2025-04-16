@@ -75,6 +75,9 @@ class SidePanel(QLabel):
         status_grid.addWidget(self.status_name, 0, 0, alignment=Qt.AlignCenter)
         status_grid.addWidget(self.status_value, 1, 0, alignment=Qt.AlignCenter)
 
+        self.btn_angle_grinder = QPushButton(objectName='btn', text='Grinder\nOn/Off')
+        self.btn_angle_grinder.clicked.connect(lambda: post_req_async(path='robot_DO', data={'name': 'angle_grinder', 'value': 'toggle'}))
+
         self.btn_stop = QPushButton(self, objectName='btn_stop', text='STOP', minimumHeight=50, maximumHeight=50)
         self.btn_stop.setCheckable(True)
         self.btn_stop.clicked.connect(self.__onbtn_stop)
@@ -91,6 +94,8 @@ class SidePanel(QLabel):
         panel.addLayout(force_grid)
         panel.addSpacing(10)
         panel.addLayout(status_grid)
+        panel.addSpacing(10)
+        panel.addWidget(self.btn_angle_grinder, alignment=Qt.AlignCenter)
         panel.addStretch()
         panel.addSpacing(10)
         panel.addWidget(self.btn_stop, alignment=Qt.AlignCenter)
@@ -131,7 +136,9 @@ class SidePanel(QLabel):
 
     def __on_new_status(self):
         self.status_value.setText(str(mem.status))
-        if mem.status == 'Booting': pass
+        if mem.status == 'Initializing':
+            post_req_async(path='mem', data={'name': 'speed_multiplier', 'value': mem.speed_option_list[mem.speed_index]})
+            post_req_async(path='mem', data={'name': 'desired_force', 'value': mem.force})
         elif mem.status == 'Emergency Stop': pass
 
     def __onbtn_stop(self):

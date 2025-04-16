@@ -157,6 +157,11 @@ def rotate_pose_around_y(pose, angle_degrees):
 
 class TargetTransformer():
     def __init__(self, robot_frame, robot_tool, robot_pose, robot_camera_tool) -> None:
+        self.robot_frame = robot_frame
+        self.robot_tool = robot_tool
+        self.robot_pose = robot_pose
+        self.robot_camera_tool = robot_camera_tool
+        
         self.T_frame_2_base = pose_2_tform(robot_frame)
         self.T_tool_2_flange = pose_2_tform(robot_tool)
         self.T_tool_2_frame = pose_2_tform(robot_pose)

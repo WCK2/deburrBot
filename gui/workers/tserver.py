@@ -95,19 +95,26 @@ class RpiHttpHandler(SimpleHTTPRequestHandler):
         if name is None or value is None:
             return self.text_response(400, "Missing 'name' or 'value' in request body")
 
-        if name == 'coarse_pic':
+        if name == 'apriltag_target_runner':
             required_keys = {"frame", "tool", "pose", "camera_tool"}
             if not isinstance(value, dict) or not required_keys.issubset(value.keys()):
+                print(f'Invalid value format. Expected keys: ....')
                 return self.text_response(400, f"Invalid value format. Expected keys: {', '.join(required_keys)}")
             
             d435 = D435()
             rgbd_data = d435.get_data(save=True)
             rgbd_data, _ = rgbd_depth_filter(rgbd_data, 100, 1500)
             
-            atdata.run_coarse_data(rgbd_data, robot_data=value)
+            selected_detections = atdata.get_target_runner_detections(rgbd_data, robot_data=value)
+            print(f'atdata.program_selection: {atdata.program_selection}')
+            print(f'atdata.target_selections: {atdata.target_selections}')
 
-            return self.json_response(200, {"status": "success", "detections": atdata.detections})
-        
+            return self.json_response(200, {"status": "success", 
+                                            "selected_detections": selected_detections,
+                                            "program_selection": atdata.program_selection,
+                                            "target_selections": atdata.target_selections,
+                                            "rgbd_data filename": rgbd_data.path_with_timestamp.split("/")[-2]
+                                            })
         
         else:
             return self.text_response(400, f"Invalid 'name' value: {name}")

@@ -178,32 +178,13 @@
 }
 
 /*===================================================
- * page tagprograms
-===================================================*/
-#page_tagprograms #btn_start {
-    min-width:175px;
-    max-width:175px;
-    background-color: rgb(32, 194, 10);
-    border: 1px solid rgb(1, 102, 1);
-    color:rgb(0, 0, 0);
-    font-size:30px;
-}
-#page_tagprograms #btn_start:pressed {
-    background-color: rgb(51, 243, 25);
-    border: 2px solid rgb(1, 102, 1);
-    font-size:28px;
-}
-#page_tagprograms #btn_start:disabled {
-    background-color: rgb(135, 135, 135);
-}
-
-/*===================================================
  * page ATprograms
 ===================================================*/
 #page_ATprograms #h1{
     background-color: transparent;
     color:rgb(255, 255, 255);
     font-size:26px;
+    font-weight: bold;
     text-decoration: underline;
     qproperty-alignment: AlignCenter;
 }
@@ -211,6 +192,26 @@
     background-color: transparent;
     color:rgb(255, 255, 255);
     font-size:24px;
+    /* font-weight: bold; */
+    qproperty-alignment: AlignCenter;
+}
+#page_ATprograms #btn_grid {
+    background-color: rgb(10, 182, 194);
+    border: 1px solid rgb(1, 102, 102);
+    color:rgb(0, 0, 0);
+    font-size:30px;
+}
+#page_ATprograms #btn_grid:pressed {
+    background-color: rgb(25, 236, 243);
+    border: 2px solid rgb(1, 95, 102);
+    font-size:28px;
+}
+#page_ATprograms #btn_grid:disabled {
+    background-color: rgb(135, 135, 135);
+}
+#page_ATprograms #img{
+    background-color: transparent;
+    border: 1px solid rgb(255, 255, 255);
     qproperty-alignment: AlignCenter;
 }
 #page_ATprograms #btn_start {
@@ -228,6 +229,31 @@
 }
 #page_ATprograms #btn_start:disabled {
     background-color: rgb(135, 135, 135);
+}
+
+/*===================================================
+ * target_selector
+===================================================*/
+#target_selector #title{
+    background-color: transparent;
+    color: rgb(255, 255, 255);
+    font-size: 26px;
+    qproperty-alignment: AlignCenter;
+}
+#target_selector #img{
+    background-color: transparent;
+    border: 1px solid rgb(255, 255, 255);
+    qproperty-alignment: AlignCenter;
+}
+#target_selector #btn_tar {
+    background-color: rgba(255, 0, 0, 200);
+    border: 1px solid rgb(0, 0, 0);
+    color: rgb(0, 0, 0);
+    font-size: 30px;
+    border-radius: 20px;
+}
+#target_selector #btn_tar:checked {
+    background-color: rgba(0, 255, 0, 200);
 }
 
 

@@ -26,10 +26,10 @@ class MEM(QObject):
         self.stop = False
 
         self.page = 0
-        self.speed_option_list = [20, 30, 40, 50, 60, 70, 80, 90, 100, 110, 120, 150, 200, 300]
-        self.speed_index = 4
+        self.speed_option_list = [10, 15, 20, 25, 30, 40, 50, 60, 70, 80, 90, 100, 110, 120, 150, 200, 300]
+        self.speed_index = 2
         
-        self.force = -8.5
+        self.force = -7
         self._status = 'Booting'
 
         #? data / image processing output
@@ -48,11 +48,96 @@ class MEM(QObject):
 mem = MEM()
 
 
+
+#~ tag processors
+def process_tag_1(detection: dict, transformer: TargetTransformer) -> dict:
+    """ Process AprilTag ID 1. Convert any arrays to lists before appending to detection """
+    rotated_pose = rotate_pose_around_x(detection['pose'], 180)
+    pose_wrt_frame = transformer.transform(rotated_pose, zero_rxryrz=False)
+    detection['pose_wrt_frame'] = pose_wrt_frame.tolist()
+
+    #? transform pose_wrt_frame to pose_wrt_world
+    T_ref_2_world = pose_2_tform(transformer.robot_frame)
+    T_tcp_2_ref = pose_2_tform(detection['pose_wrt_frame'])
+    T_tcp_2_world = np.dot(T_ref_2_world, T_tcp_2_ref)
+    pose_tcp_2_world = np.round(tform_2_pose(T_tcp_2_world), 3).tolist()
+    detection['_pose_tcp_2_world'] = pose_tcp_2_world[:] #! temp: fixed rot
+
+    # temp_rot = [0.244, -1.208, 91.172] #! temp: fixed rot
+    temp_rot = [0.343, -0.71, 91.2] #! temp: fixed rot
+    pose_tcp_2_world[3:] = temp_rot #! temp: fixed rot
+    detection['pose_tcp_2_world'] = pose_tcp_2_world #! temp: fixed rot
+
+    #? right and left ref frames
+    right_ref = rotate_pose_around_y(pose_tcp_2_world, 45)
+    detection['right_ref'] = right_ref
+
+    left_ref = rotate_pose_around_y(pose_tcp_2_world, -45)
+    detection['left_ref'] = left_ref
+
+    #? check boundaries
+    tag_id = detection.get('id')
+    tag_data = TAG_ID_DATA.get(tag_id, {})
+    boundaries = tag_data.get('boundaries', {})
+
+    within_boundaries = True
+    axes = ['x', 'y', 'z', 'rx', 'ry', 'rz']
+    for i, axis in enumerate(axes):
+        boundary = boundaries.get(axis, [float('-inf'), float('inf')])
+        if not (boundary[0] <= pose_tcp_2_world[i] <= boundary[1]):
+            within_boundaries = False
+            print(f'Pose {axis} out of bounds for tag {tag_id}: {pose_tcp_2_world[i]} not in {boundary}')
+            break
+
+    detection['valid'] = within_boundaries
+
+    # TODO #? check that the part is on the jig
+
+    return detection
+
+def process_tag_3(detection: dict, transformer: TargetTransformer) -> dict:
+    """ Process AprilTag ID 2. Convert any arrays to lists before appending to detection """
+    rotated_pose = rotate_pose_around_x(detection['pose'], 180)
+    pose_wrt_frame = transformer.transform(rotated_pose, zero_rxryrz=False)
+    detection['pose_wrt_frame'] = pose_wrt_frame.tolist()
+
+    #? transform pose_wrt_frame to pose_wrt_world
+    T_ref_2_world = pose_2_tform(transformer.robot_frame)
+    T_tcp_2_ref = pose_2_tform(detection['pose_wrt_frame'])
+    T_tcp_2_world = np.dot(T_ref_2_world, T_tcp_2_ref)
+    pose_tcp_2_world = np.round(tform_2_pose(T_tcp_2_world), 3).tolist()
+    detection['_pose_tcp_2_world'] = pose_tcp_2_world[:] #! temp: fixed rot
+
+    temp_rot = [0.3, 0.35, 91.1] #! temp: fixed rot
+    pose_tcp_2_world[3:] = temp_rot #! temp: fixed rot
+    detection['pose_tcp_2_world'] = pose_tcp_2_world #! temp: fixed rot
+
+    #? check boundaries
+    tag_id = detection.get('id')
+    tag_data = TAG_ID_DATA.get(tag_id, {})
+    boundaries = tag_data.get('boundaries', {})
+
+    within_boundaries = True
+    axes = ['x', 'y', 'z', 'rx', 'ry', 'rz']
+    for i, axis in enumerate(axes):
+        boundary = boundaries.get(axis, [float('-inf'), float('inf')])
+        if not (boundary[0] <= pose_tcp_2_world[i] <= boundary[1]):
+            within_boundaries = False
+            print(f'Pose {axis} out of bounds for tag {tag_id}: {pose_tcp_2_world[i]} not in {boundary}')
+            break
+
+    detection['valid'] = within_boundaries
+
+    # TODO #? check that the part is on the jig
+
+    return detection
+
+
 #~ AT Data class
 class ATDATA(QObject):
     new_status = pyqtSignal()
     at_signals = pyqtSignal(str)
-    coarse_data = pyqtSignal()
+    target_runner_detections = pyqtSignal()
     def __new__(cls, *args, **kw):
          if not hasattr(cls, '_instance'):
              orig = super(ATDATA, cls)
@@ -67,8 +152,11 @@ class ATDATA(QObject):
         self.robot_pose = [0,0,0,0,0,0]
         self.robot_camera_tool = [0,0,0,0,0,0]
 
-    def run_coarse_data(self, rgbd_data, robot_data: dict):
-        print(f'run_coarse_data on rgbd_data {rgbd_data.path_with_timestamp.split("/")[-2]}')
+        self.program_selection = 0
+        self.target_selections = []
+
+    def get_target_runner_detections(self, rgbd_data, robot_data: dict):
+        print(f'run_target_runner_detections on rgbd_data {rgbd_data.path_with_timestamp.split("/")[-2]}')
         for key, value in robot_data.items():
             print(f'{key.capitalize():<15}: {value}')
         
@@ -89,7 +177,7 @@ class ATDATA(QObject):
         atdata.robot_camera_tool = robot_data["camera_tool"]
 
         #? detection(s)
-        self.detections, self.draw_img = detect_and_estimate_tags(
+        self.all_detections, self.draw_img = detect_and_estimate_tags(
             self.colors_original, 
             self.camera_params, 
             self.camera_distortion, 
@@ -104,58 +192,37 @@ class ATDATA(QObject):
             robot_camera_tool = self.robot_camera_tool
         )
 
-        for c, detection in enumerate(self.detections):
-            rotated_pose = rotate_pose_around_x(detection['pose'], 180)
-            pose_wrt_frame = transformer.transform(rotated_pose, zero_rxryrz=False)
-
-            #? prep necessary data and convert any arrays to lists
-            detection['pose_wrt_frame'] = pose_wrt_frame.tolist()
-
-            #? transform pose_wrt_frame to pose_wrt_world
-            T_ref_2_world = pose_2_tform(self.robot_frame)
-            T_tcp_2_ref = pose_2_tform(detection['pose_wrt_frame'])
-            T_tcp_2_world = np.dot(T_ref_2_world, T_tcp_2_ref)
-            pose_tcp_2_world = np.round(tform_2_pose(T_tcp_2_world), 3).tolist()
-            detection['_pose_tcp_2_world'] = pose_tcp_2_world[:] #! temp: fixed rot
-
-            temp_rot = [0.244, -1.208, 91.172] #! temp: fixed rot
-            pose_tcp_2_world[3:] = temp_rot #! temp: fixed rot
-            detection['pose_tcp_2_world'] = pose_tcp_2_world #! temp: fixed rot
-
-            #? right and left ref frames
-            right_ref = rotate_pose_around_y(pose_tcp_2_world, 45)
-            detection['right_ref'] = right_ref
-
-            left_ref = rotate_pose_around_y(pose_tcp_2_world, -45)
-            detection['left_ref'] = left_ref
-
-            #? check boundaries
-            tag_id = detection.get('id')
-            tag_data = TAG_ID_DATA.get(tag_id, {})
-            boundaries = tag_data.get('boundaries', {})
-
-            within_boundaries = True
-            axes = ['x', 'y', 'z', 'rx', 'ry', 'rz']
-            for i, axis in enumerate(axes):
-                boundary = boundaries.get(axis, [float('-inf'), float('inf')])
-                if not (boundary[0] <= pose_tcp_2_world[i] <= boundary[1]):
-                    within_boundaries = False
-                    print(f'Pose {axis} out of bounds for tag {tag_id}: {pose_tcp_2_world[i]} not in {boundary}')
-                    break
-            
-            detection['valid'] = within_boundaries
-
-            # TODO: Check that the part is on the jig
-
-            #? log
+        selected_detections = []
+        for c, detection in enumerate(self.all_detections):
             print(f'\ndetection[{c}]\n' + '=' * 30)
+
+            if self.program_selection != detection.get('program', -1):
+                print(f'skipping bc program number mismatch: {self.program_selection} != {detection.get("program", -1)}')
+                for key, value in detection.items():
+                    print(f'{key.capitalize():<15}: {value}')
+                print('=' * 30)
+                continue
+
+            tag_id = detection.get('id')
+            if tag_id == 1:
+                detection = process_tag_1(detection, transformer)
+            elif tag_id == 3:
+                detection = process_tag_3(detection, transformer)
+            else:
+                print(f'No processor function for tag ID {tag_id}, skipping...')
+                continue
+
+
+            #? append and log
+            selected_detections.append(detection)
+
             for key, value in detection.items():
                 print(f'{key.capitalize():<15}: {value}')
             print('=' * 30)
 
+        self.target_runner_detections.emit()
+        return selected_detections
 
-
-        self.coarse_data.emit()
 
 
 atdata = ATDATA()
@@ -182,7 +249,9 @@ if __name__ == "__main__":
         'camera_tool': [78.21, 73.4, 50.54, 15.29, -0.46, 150.04],
     }
 
-    atdata.run_coarse_data(rgbd_data, robot_data)
+    atdata.program_selection = 12
+    atdata.target_selections = [1,2,4,5,6]
+    atdata.get_target_runner_detections(rgbd_data, robot_data)
     cv2_show(atdata.draw_img)
 
 
